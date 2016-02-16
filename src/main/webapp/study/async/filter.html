@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+</head>
+<body>
+
+<script src="../../framework/Async/dist/async.js"></script>
+<script>
+    +function (window, undefined) {
+        'use strict';
+
+        var async = window.async;
+
+        console.log(async);
+
+//        callback不传递error参数， 结果中没有error
+        async.filter([1, 2, 3], function (d, callback) {
+            callback(true);
+        }, function (result) {
+            console.log(result);
+        });
+    }(window);
+</script>
+
+</body>
+</html>

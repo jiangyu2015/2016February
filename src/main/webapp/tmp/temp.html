@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script>
+        var logger = function (s) {
+            console.log(s);
+        };
+
+        function Foo() {
+            getName = function () {
+                logger(1);
+            };
+            return this;
+        }
+
+        Foo.getName = function () {
+            logger(2);
+        };
+        Foo.prototype.getName = function () {
+            logger(3);
+        };
+        var getName = function () {
+            logger(4);
+        };
+
+        function getName() {
+            logger(5);
+        }
+
+        //请写出以下输出结果：
+        Foo.getName();
+        getName();
+        Foo().getName();
+        getName();
+        var r1 = new Foo.getName();
+//        console.log(typeof r1);
+        new Foo().getName();
+        new new Foo().getName();
+
+
+</script>
+</body>
+</html>
