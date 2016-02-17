@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+
+<h2>Participants</h2>
+Here are the participants:
+
+<div data-bind="template: { name: 'person-template', data: seller }"></div>
+<script type="text/html" id="person-template">
+    <h3 data-bind="text: name"></h3>
+    <p>Credits: <span data-bind="text: credits"></span></p>
+    <div data-bind="text: fullText"></div>
+</script>
+
+
+<script src="../../framework/knockout/dest/knockout.js"></script>
+<script>
+    +function (window, undefined) {
+        'use strict';
+
+        function MyViewModel() {
+            this.seller = {name: ko.observable('Mario'), credits: 5800};
+        }
+
+        var model = new MyViewModel();
+        model.seller.fullText = ko.dependentObservable(function () {
+            return this.name() + ' ' + this.credits;
+        }, model.seller);
+        ko.applyBindings(model);
+        setTimeout(function () {
+            model.seller.name.subscribe(function (newValue) {
+                console.log(newValue);
+            });
+            model.seller.name('13');
+        }, 1000);
+    }(window);
+</script>
+</body>
+</html>
