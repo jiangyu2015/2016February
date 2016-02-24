@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+    .axis path, .axis line {
+        fill: none;
+        stroke: black;
+        shape-rendering: crispEdges;
+    }
+
+    .axis text {
+        font-size: 11px;
+    }
+</style>
+<body>
+
+<script src="../framework/d3/dest/d3.js"></script>
+<script>
+    +function (window, undefined) {
+        'use strict';
+
+        var d3 = window.d3;
+        var data = [1, 2, 3, 4, 5];
+        var svg = d3.select('body').append('svg')
+                .attr('width', 500)
+                .attr('height', 500);
+
+
+        var x = d3.scale.linear().domain([0, d3.max(data)]).range([0, 200]);
+        var y = d3.scale.linear().domain([0, d3.max(data)]).range([200, 0]);
+
+        svg.selectAll('circle')
+                .data(data)
+                .enter()
+                .append('circle')
+                .attr('cx', function (d) {
+                    return x(d);
+                })
+                .attr('cy', function (d) {
+                    return y(d);
+                })
+                .attr('r', function (d) {
+                    return d;
+                });
+
+
+        var xAxis = d3.svg.axis().scale(x).orient('bottom').ticks(5);
+
+        svg.append('g').attr('class', 'axis').attr('transform', 'translate(0, 200)').call(xAxis);
+
+        svg.on('click', function () {
+            var data = d3.range(1, 5).map(function (d) {
+                return 2 * d;
+            });
+            var newX = d3.scale.linear().domain([0, d3.max(data)]).range([0, 400]);
+            var newY = d3.scale.linear().domain([0, d3.max(data)]).range([400, 0]);
+            svg.selectAll('circle')
+                    .data(data)
+                    .transition()
+                    .delay(function (d, i) {
+                        return i * 1000;
+                    })
+                    .duration(2000)
+                    .ease('elastic')
+                    .attr({
+                        cx: function (d) {
+                            return newX(d);
+                        },
+                        cy: function (d) {
+                            return newY(d);
+                        },
+                        r: function (d) {
+                            return d;
+                        }
+                    });
+            xAxis.scale(newX);
+            svg.select('.axis')
+                    .transition()
+                    .duration(2000)
+                    .call(xAxis);
+        });
+
+    }(window);
+</script>
+</body>
+</html>
