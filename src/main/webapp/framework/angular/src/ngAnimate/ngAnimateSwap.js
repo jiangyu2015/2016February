@@ -87,30 +87,30 @@
  *  </file>
  * </example>
  */
-var ngAnimateSwapDirective = ['$animate', '$rootScope', function($animate, $rootScope) {
-  return {
-    restrict: 'A',
-    transclude: 'element',
-    terminal: true,
-    priority: 600, // we use 600 here to ensure that the directive is caught before others
-    link: function(scope, $element, attrs, ctrl, $transclude) {
-      var previousElement, previousScope;
-      scope.$watchCollection(attrs.ngAnimateSwap || attrs['for'], function(value) {
-        if (previousElement) {
-          $animate.leave(previousElement);
+var ngAnimateSwapDirective = ['$animate', '$rootScope', function ($animate, $rootScope) {
+    return {
+        restrict: 'A',
+        transclude: 'element',
+        terminal: true,
+        priority: 600, // we use 600 here to ensure that the directive is caught before others
+        link: function (scope, $element, attrs, ctrl, $transclude) {
+            var previousElement, previousScope;
+            scope.$watchCollection(attrs.ngAnimateSwap || attrs['for'], function (value) {
+                if (previousElement) {
+                    $animate.leave(previousElement);
+                }
+                if (previousScope) {
+                    previousScope.$destroy();
+                    previousScope = null;
+                }
+                if (value || value === 0) {
+                    previousScope = scope.$new();
+                    $transclude(previousScope, function (element) {
+                        previousElement = element;
+                        $animate.enter(element, null, $element);
+                    });
+                }
+            });
         }
-        if (previousScope) {
-          previousScope.$destroy();
-          previousScope = null;
-        }
-        if (value || value === 0) {
-          previousScope = scope.$new();
-          $transclude(previousScope, function(element) {
-            previousElement = element;
-            $animate.enter(element, null, $element);
-          });
-        }
-      });
-    }
-  };
+    };
 }];

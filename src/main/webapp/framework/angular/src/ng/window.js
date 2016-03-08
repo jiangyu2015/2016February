@@ -16,31 +16,31 @@
  * expression.
  *
  * @example
-   <example module="windowExample">
-     <file name="index.html">
-       <script>
-         angular.module('windowExample', [])
-           .controller('ExampleController', ['$scope', '$window', function($scope, $window) {
+ <example module="windowExample">
+ <file name="index.html">
+ <script>
+ angular.module('windowExample', [])
+ .controller('ExampleController', ['$scope', '$window', function($scope, $window) {
              $scope.greeting = 'Hello, World!';
              $scope.doGreeting = function(greeting) {
                $window.alert(greeting);
              };
            }]);
-       </script>
-       <div ng-controller="ExampleController">
-         <input type="text" ng-model="greeting" aria-label="greeting" />
-         <button ng-click="doGreeting(greeting)">ALERT</button>
-       </div>
-     </file>
-     <file name="protractor.js" type="protractor">
-      it('should display the greeting in the input box', function() {
+ </script>
+ <div ng-controller="ExampleController">
+ <input type="text" ng-model="greeting" aria-label="greeting" />
+ <button ng-click="doGreeting(greeting)">ALERT</button>
+ </div>
+ </file>
+ <file name="protractor.js" type="protractor">
+ it('should display the greeting in the input box', function() {
        element(by.model('greeting')).sendKeys('Hello, E2E Tests');
        // If we click the button it will block the test runner
        // element(':button').click();
       });
-     </file>
-   </example>
+ </file>
+ </example>
  */
 function $WindowProvider() {
-  this.$get = valueFn(window);
+    this.$get = valueFn(window);
 }

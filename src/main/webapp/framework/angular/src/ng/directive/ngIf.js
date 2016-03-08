@@ -47,81 +47,81 @@
  *     element is added to the DOM tree.
  *
  * @example
-  <example module="ngAnimate" deps="angular-animate.js" animations="true">
-    <file name="index.html">
-      <label>Click me: <input type="checkbox" ng-model="checked" ng-init="checked=true" /></label><br/>
-      Show when checked:
-      <span ng-if="checked" class="animate-if">
-        This is removed when the checkbox is unchecked.
-      </span>
-    </file>
-    <file name="animations.css">
-      .animate-if {
+ <example module="ngAnimate" deps="angular-animate.js" animations="true">
+ <file name="index.html">
+ <label>Click me: <input type="checkbox" ng-model="checked" ng-init="checked=true" /></label><br/>
+ Show when checked:
+ <span ng-if="checked" class="animate-if">
+ This is removed when the checkbox is unchecked.
+ </span>
+ </file>
+ <file name="animations.css">
+ .animate-if {
         background:white;
         border:1px solid black;
         padding:10px;
       }
 
-      .animate-if.ng-enter, .animate-if.ng-leave {
+ .animate-if.ng-enter, .animate-if.ng-leave {
         transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
       }
 
-      .animate-if.ng-enter,
-      .animate-if.ng-leave.ng-leave-active {
+ .animate-if.ng-enter,
+ .animate-if.ng-leave.ng-leave-active {
         opacity:0;
       }
 
-      .animate-if.ng-leave,
-      .animate-if.ng-enter.ng-enter-active {
+ .animate-if.ng-leave,
+ .animate-if.ng-enter.ng-enter-active {
         opacity:1;
       }
-    </file>
-  </example>
+ </file>
+ </example>
  */
-var ngIfDirective = ['$animate', function($animate) {
-  return {
-    multiElement: true,
-    transclude: 'element',
-    priority: 600,
-    terminal: true,
-    restrict: 'A',
-    $$tlb: true,
-    link: function($scope, $element, $attr, ctrl, $transclude) {
-        var block, childScope, previousElements;
-        $scope.$watch($attr.ngIf, function ngIfWatchAction(value) {
+var ngIfDirective = ['$animate', function ($animate) {
+    return {
+        multiElement: true,
+        transclude: 'element',
+        priority: 600,
+        terminal: true,
+        restrict: 'A',
+        $$tlb: true,
+        link: function ($scope, $element, $attr, ctrl, $transclude) {
+            var block, childScope, previousElements;
+            $scope.$watch($attr.ngIf, function ngIfWatchAction(value) {
 
-          if (value) {
-            if (!childScope) {
-              $transclude(function(clone, newScope) {
-                childScope = newScope;
-                clone[clone.length++] = document.createComment(' end ngIf: ' + $attr.ngIf + ' ');
-                // Note: We only need the first/last node of the cloned nodes.
-                // However, we need to keep the reference to the jqlite wrapper as it might be changed later
-                // by a directive with templateUrl when its template arrives.
-                block = {
-                  clone: clone
-                };
-                $animate.enter(clone, $element.parent(), $element);
-              });
-            }
-          } else {
-            if (previousElements) {
-              previousElements.remove();
-              previousElements = null;
-            }
-            if (childScope) {
-              childScope.$destroy();
-              childScope = null;
-            }
-            if (block) {
-              previousElements = getBlockNodes(block.clone);
-              $animate.leave(previousElements).then(function() {
-                previousElements = null;
-              });
-              block = null;
-            }
-          }
-        });
-    }
-  };
+                if (value) {
+                    if (!childScope) {
+                        $transclude(function (clone, newScope) {
+                            childScope = newScope;
+                            clone[clone.length++] = document.createComment(' end ngIf: ' + $attr.ngIf + ' ');
+                            // Note: We only need the first/last node of the cloned nodes.
+                            // However, we need to keep the reference to the jqlite wrapper as it might be changed later
+                            // by a directive with templateUrl when its template arrives.
+                            block = {
+                                clone: clone
+                            };
+                            $animate.enter(clone, $element.parent(), $element);
+                        });
+                    }
+                } else {
+                    if (previousElements) {
+                        previousElements.remove();
+                        previousElements = null;
+                    }
+                    if (childScope) {
+                        childScope.$destroy();
+                        childScope = null;
+                    }
+                    if (block) {
+                        previousElements = getBlockNodes(block.clone);
+                        $animate.leave(previousElements).then(function () {
+                            previousElements = null;
+                        });
+                        block = null;
+                    }
+                }
+            });
+        }
+    };
 }];

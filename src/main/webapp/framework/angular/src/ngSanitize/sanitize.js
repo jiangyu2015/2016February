@@ -50,11 +50,11 @@ var $sanitizeMinErr = angular.$$minErr('$sanitize');
  * @returns {string} Sanitized HTML.
  *
  * @example
-   <example module="sanitizeExample" deps="angular-sanitize.js">
-   <file name="index.html">
-     <script>
-         angular.module('sanitizeExample', ['ngSanitize'])
-           .controller('ExampleController', ['$scope', '$sce', function($scope, $sce) {
+ <example module="sanitizeExample" deps="angular-sanitize.js">
+ <file name="index.html">
+ <script>
+ angular.module('sanitizeExample', ['ngSanitize'])
+ .controller('ExampleController', ['$scope', '$sce', function($scope, $sce) {
              $scope.snippet =
                '<p style="color:blue">an html\n' +
                '<em onmouseover="this.textContent=\'PWN3D!\'">click here</em>\n' +
@@ -63,61 +63,61 @@ var $sanitizeMinErr = angular.$$minErr('$sanitize');
                return $sce.trustAsHtml($scope.snippet);
              };
            }]);
-     </script>
-     <div ng-controller="ExampleController">
-        Snippet: <textarea ng-model="snippet" cols="60" rows="3"></textarea>
-       <table>
-         <tr>
-           <td>Directive</td>
-           <td>How</td>
-           <td>Source</td>
-           <td>Rendered</td>
-         </tr>
-         <tr id="bind-html-with-sanitize">
-           <td>ng-bind-html</td>
-           <td>Automatically uses $sanitize</td>
-           <td><pre>&lt;div ng-bind-html="snippet"&gt;<br/>&lt;/div&gt;</pre></td>
-           <td><div ng-bind-html="snippet"></div></td>
-         </tr>
-         <tr id="bind-html-with-trust">
-           <td>ng-bind-html</td>
-           <td>Bypass $sanitize by explicitly trusting the dangerous value</td>
-           <td>
-           <pre>&lt;div ng-bind-html="deliberatelyTrustDangerousSnippet()"&gt;
-&lt;/div&gt;</pre>
-           </td>
-           <td><div ng-bind-html="deliberatelyTrustDangerousSnippet()"></div></td>
-         </tr>
-         <tr id="bind-default">
-           <td>ng-bind</td>
-           <td>Automatically escapes</td>
-           <td><pre>&lt;div ng-bind="snippet"&gt;<br/>&lt;/div&gt;</pre></td>
-           <td><div ng-bind="snippet"></div></td>
-         </tr>
-       </table>
-       </div>
-   </file>
-   <file name="protractor.js" type="protractor">
-     it('should sanitize the html snippet by default', function() {
+ </script>
+ <div ng-controller="ExampleController">
+ Snippet: <textarea ng-model="snippet" cols="60" rows="3"></textarea>
+ <table>
+ <tr>
+ <td>Directive</td>
+ <td>How</td>
+ <td>Source</td>
+ <td>Rendered</td>
+ </tr>
+ <tr id="bind-html-with-sanitize">
+ <td>ng-bind-html</td>
+ <td>Automatically uses $sanitize</td>
+ <td><pre>&lt;div ng-bind-html="snippet"&gt;<br/>&lt;/div&gt;</pre></td>
+ <td><div ng-bind-html="snippet"></div></td>
+ </tr>
+ <tr id="bind-html-with-trust">
+ <td>ng-bind-html</td>
+ <td>Bypass $sanitize by explicitly trusting the dangerous value</td>
+ <td>
+ <pre>&lt;div ng-bind-html="deliberatelyTrustDangerousSnippet()"&gt;
+ &lt;/div&gt;</pre>
+ </td>
+ <td><div ng-bind-html="deliberatelyTrustDangerousSnippet()"></div></td>
+ </tr>
+ <tr id="bind-default">
+ <td>ng-bind</td>
+ <td>Automatically escapes</td>
+ <td><pre>&lt;div ng-bind="snippet"&gt;<br/>&lt;/div&gt;</pre></td>
+ <td><div ng-bind="snippet"></div></td>
+ </tr>
+ </table>
+ </div>
+ </file>
+ <file name="protractor.js" type="protractor">
+ it('should sanitize the html snippet by default', function() {
        expect(element(by.css('#bind-html-with-sanitize div')).getInnerHtml()).
          toBe('<p>an html\n<em>click here</em>\nsnippet</p>');
      });
 
-     it('should inline raw snippet if bound to a trusted value', function() {
+ it('should inline raw snippet if bound to a trusted value', function() {
        expect(element(by.css('#bind-html-with-trust div')).getInnerHtml()).
          toBe("<p style=\"color:blue\">an html\n" +
               "<em onmouseover=\"this.textContent='PWN3D!'\">click here</em>\n" +
               "snippet</p>");
      });
 
-     it('should escape snippet without any filter', function() {
+ it('should escape snippet without any filter', function() {
        expect(element(by.css('#bind-default div')).getInnerHtml()).
          toBe("&lt;p style=\"color:blue\"&gt;an html\n" +
               "&lt;em onmouseover=\"this.textContent='PWN3D!'\"&gt;click here&lt;/em&gt;\n" +
               "snippet&lt;/p&gt;");
      });
 
-     it('should update', function() {
+ it('should update', function() {
        element(by.model('snippet')).clear();
        element(by.model('snippet')).sendKeys('new <b onclick="alert(1)">text</b>');
        expect(element(by.css('#bind-html-with-sanitize div')).getInnerHtml()).
@@ -127,8 +127,8 @@ var $sanitizeMinErr = angular.$$minErr('$sanitize');
        expect(element(by.css('#bind-default div')).getInnerHtml()).toBe(
          "new &lt;b onclick=\"alert(1)\"&gt;text&lt;/b&gt;");
      });
-   </file>
-   </example>
+ </file>
+ </example>
  */
 
 
@@ -140,74 +140,74 @@ var $sanitizeMinErr = angular.$$minErr('$sanitize');
  * Creates and configures {@link $sanitize} instance.
  */
 function $SanitizeProvider() {
-  var svgEnabled = false;
+    var svgEnabled = false;
 
-  this.$get = ['$$sanitizeUri', function($$sanitizeUri) {
-    if (svgEnabled) {
-      angular.extend(validElements, svgElements);
-    }
-    return function(html) {
-      var buf = [];
-      htmlParser(html, htmlSanitizeWriter(buf, function(uri, isImage) {
-        return !/^unsafe:/.test($$sanitizeUri(uri, isImage));
-      }));
-      return buf.join('');
-    };
-  }];
+    this.$get = ['$$sanitizeUri', function ($$sanitizeUri) {
+        if (svgEnabled) {
+            angular.extend(validElements, svgElements);
+        }
+        return function (html) {
+            var buf = [];
+            htmlParser(html, htmlSanitizeWriter(buf, function (uri, isImage) {
+                return !/^unsafe:/.test($$sanitizeUri(uri, isImage));
+            }));
+            return buf.join('');
+        };
+    }];
 
 
-  /**
-   * @ngdoc method
-   * @name $sanitizeProvider#enableSvg
-   * @kind function
-   *
-   * @description
-   * Enables a subset of svg to be supported by the sanitizer.
-   *
-   * <div class="alert alert-warning">
-   *   <p>By enabling this setting without taking other precautions, you might expose your
-   *   application to click-hijacking attacks. In these attacks, sanitized svg elements could be positioned
-   *   outside of the containing element and be rendered over other elements on the page (e.g. a login
-   *   link). Such behavior can then result in phishing incidents.</p>
-   *
-   *   <p>To protect against these, explicitly setup `overflow: hidden` css rule for all potential svg
-   *   tags within the sanitized content:</p>
-   *
-   *   <br>
-   *
-   *   <pre><code>
-   *   .rootOfTheIncludedContent svg {
+    /**
+     * @ngdoc method
+     * @name $sanitizeProvider#enableSvg
+     * @kind function
+     *
+     * @description
+     * Enables a subset of svg to be supported by the sanitizer.
+     *
+     * <div class="alert alert-warning">
+     *   <p>By enabling this setting without taking other precautions, you might expose your
+     *   application to click-hijacking attacks. In these attacks, sanitized svg elements could be positioned
+     *   outside of the containing element and be rendered over other elements on the page (e.g. a login
+     *   link). Such behavior can then result in phishing incidents.</p>
+     *
+     *   <p>To protect against these, explicitly setup `overflow: hidden` css rule for all potential svg
+     *   tags within the sanitized content:</p>
+     *
+     *   <br>
+     *
+     *   <pre><code>
+     *   .rootOfTheIncludedContent svg {
    *     overflow: hidden !important;
    *   }
-   *   </code></pre>
-   * </div>
-   *
-   * @param {boolean=} regexp New regexp to whitelist urls with.
-   * @returns {boolean|ng.$sanitizeProvider} Returns the currently configured value if called
-   *    without an argument or self for chaining otherwise.
-   */
-  this.enableSvg = function(enableSvg) {
-    if (angular.isDefined(enableSvg)) {
-      svgEnabled = enableSvg;
-      return this;
-    } else {
-      return svgEnabled;
-    }
-  };
+     *   </code></pre>
+     * </div>
+     *
+     * @param {boolean=} regexp New regexp to whitelist urls with.
+     * @returns {boolean|ng.$sanitizeProvider} Returns the currently configured value if called
+     *    without an argument or self for chaining otherwise.
+     */
+    this.enableSvg = function (enableSvg) {
+        if (angular.isDefined(enableSvg)) {
+            svgEnabled = enableSvg;
+            return this;
+        } else {
+            return svgEnabled;
+        }
+    };
 }
 
 function sanitizeText(chars) {
-  var buf = [];
-  var writer = htmlSanitizeWriter(buf, angular.noop);
-  writer.chars(chars);
-  return buf.join('');
+    var buf = [];
+    var writer = htmlSanitizeWriter(buf, angular.noop);
+    writer.chars(chars);
+    return buf.join('');
 }
 
 
 // Regular Expressions for parsing tags and attributes
 var SURROGATE_PAIR_REGEXP = /[\uD800-\uDBFF][\uDC00-\uDFFF]/g,
-  // Match everything outside of normal chars and " (quote character)
-  NON_ALPHANUMERIC_REGEXP = /([^\#-~ |!])/g;
+// Match everything outside of normal chars and " (quote character)
+    NON_ALPHANUMERIC_REGEXP = /([^\#-~ |!])/g;
 
 
 // Good source of info about elements and attributes
@@ -223,35 +223,35 @@ var voidElements = toMap("area,br,col,hr,img,wbr");
 var optionalEndTagBlockElements = toMap("colgroup,dd,dt,li,p,tbody,td,tfoot,th,thead,tr"),
     optionalEndTagInlineElements = toMap("rp,rt"),
     optionalEndTagElements = angular.extend({},
-                                            optionalEndTagInlineElements,
-                                            optionalEndTagBlockElements);
+        optionalEndTagInlineElements,
+        optionalEndTagBlockElements);
 
 // Safe Block Elements - HTML5
 var blockElements = angular.extend({}, optionalEndTagBlockElements, toMap("address,article," +
-        "aside,blockquote,caption,center,del,dir,div,dl,figure,figcaption,footer,h1,h2,h3,h4,h5," +
-        "h6,header,hgroup,hr,ins,map,menu,nav,ol,pre,section,table,ul"));
+    "aside,blockquote,caption,center,del,dir,div,dl,figure,figcaption,footer,h1,h2,h3,h4,h5," +
+    "h6,header,hgroup,hr,ins,map,menu,nav,ol,pre,section,table,ul"));
 
 // Inline Elements - HTML5
 var inlineElements = angular.extend({}, optionalEndTagInlineElements, toMap("a,abbr,acronym,b," +
-        "bdi,bdo,big,br,cite,code,del,dfn,em,font,i,img,ins,kbd,label,map,mark,q,ruby,rp,rt,s," +
-        "samp,small,span,strike,strong,sub,sup,time,tt,u,var"));
+    "bdi,bdo,big,br,cite,code,del,dfn,em,font,i,img,ins,kbd,label,map,mark,q,ruby,rp,rt,s," +
+    "samp,small,span,strike,strong,sub,sup,time,tt,u,var"));
 
 // SVG Elements
 // https://wiki.whatwg.org/wiki/Sanitization_rules#svg_Elements
 // Note: the elements animate,animateColor,animateMotion,animateTransform,set are intentionally omitted.
 // They can potentially allow for arbitrary javascript to be executed. See #11290
 var svgElements = toMap("circle,defs,desc,ellipse,font-face,font-face-name,font-face-src,g,glyph," +
-        "hkern,image,linearGradient,line,marker,metadata,missing-glyph,mpath,path,polygon,polyline," +
-        "radialGradient,rect,stop,svg,switch,text,title,tspan");
+    "hkern,image,linearGradient,line,marker,metadata,missing-glyph,mpath,path,polygon,polyline," +
+    "radialGradient,rect,stop,svg,switch,text,title,tspan");
 
 // Blocked Elements (will be stripped)
 var blockedElements = toMap("script,style");
 
 var validElements = angular.extend({},
-                                   voidElements,
-                                   blockElements,
-                                   inlineElements,
-                                   optionalEndTagElements);
+    voidElements,
+    blockElements,
+    inlineElements,
+    optionalEndTagElements);
 
 //Attributes that have href and hence need to be sanitized
 var uriAttrs = toMap("background,cite,href,longdesc,src,xlink:href");
@@ -281,38 +281,38 @@ var svgAttrs = toMap('accent-height,accumulate,additive,alphabetic,arabic-form,a
     'xlink:type,xml:base,xml:lang,xml:space,xmlns,xmlns:xlink,y,y1,y2,zoomAndPan', true);
 
 var validAttrs = angular.extend({},
-                                uriAttrs,
-                                svgAttrs,
-                                htmlAttrs);
+    uriAttrs,
+    svgAttrs,
+    htmlAttrs);
 
 function toMap(str, lowercaseKeys) {
-  var obj = {}, items = str.split(','), i;
-  for (i = 0; i < items.length; i++) {
-    obj[lowercaseKeys ? angular.lowercase(items[i]) : items[i]] = true;
-  }
-  return obj;
+    var obj = {}, items = str.split(','), i;
+    for (i = 0; i < items.length; i++) {
+        obj[lowercaseKeys ? angular.lowercase(items[i]) : items[i]] = true;
+    }
+    return obj;
 }
 
 var inertBodyElement;
-(function(window) {
-  var doc;
-  if (window.document && window.document.implementation) {
-    doc = window.document.implementation.createHTMLDocument("inert");
-  } else {
-    throw $sanitizeMinErr('noinert', "Can't create an inert html document");
-  }
-  var docElement = doc.documentElement || doc.getDocumentElement();
-  var bodyElements = docElement.getElementsByTagName('body');
+(function (window) {
+    var doc;
+    if (window.document && window.document.implementation) {
+        doc = window.document.implementation.createHTMLDocument("inert");
+    } else {
+        throw $sanitizeMinErr('noinert', "Can't create an inert html document");
+    }
+    var docElement = doc.documentElement || doc.getDocumentElement();
+    var bodyElements = docElement.getElementsByTagName('body');
 
-  // usually there should be only one body element in the document, but IE doesn't have any, so we need to create one
-  if (bodyElements.length === 1) {
-    inertBodyElement = bodyElements[0];
-  } else {
-    var html = doc.createElement('html');
-    inertBodyElement = doc.createElement('body');
-    html.appendChild(inertBodyElement);
-    doc.appendChild(html);
-  }
+    // usually there should be only one body element in the document, but IE doesn't have any, so we need to create one
+    if (bodyElements.length === 1) {
+        inertBodyElement = bodyElements[0];
+    } else {
+        var html = doc.createElement('html');
+        inertBodyElement = doc.createElement('body');
+        html.appendChild(inertBodyElement);
+        doc.appendChild(html);
+    }
 })(window);
 
 /**
@@ -328,72 +328,72 @@ var inertBodyElement;
  * @param {object} handler
  */
 function htmlParser(html, handler) {
-  if (html === null || html === undefined) {
-    html = '';
-  } else if (typeof html !== 'string') {
-    html = '' + html;
-  }
-  inertBodyElement.innerHTML = html;
-
-  //mXSS protection
-  var mXSSAttempts = 5;
-  do {
-    if (mXSSAttempts === 0) {
-      throw $sanitizeMinErr('uinput', "Failed to sanitize html because the input is unstable");
+    if (html === null || html === undefined) {
+        html = '';
+    } else if (typeof html !== 'string') {
+        html = '' + html;
     }
-    mXSSAttempts--;
-
-    // strip custom-namespaced attributes on IE<=11
-    if (document.documentMode <= 11) {
-      stripCustomNsAttrs(inertBodyElement);
-    }
-    html = inertBodyElement.innerHTML; //trigger mXSS
     inertBodyElement.innerHTML = html;
-  } while (html !== inertBodyElement.innerHTML);
 
-  var node = inertBodyElement.firstChild;
-  while (node) {
-    switch (node.nodeType) {
-      case 1: // ELEMENT_NODE
-        handler.start(node.nodeName.toLowerCase(), attrToMap(node.attributes));
-        break;
-      case 3: // TEXT NODE
-        handler.chars(node.textContent);
-        break;
-    }
-
-    var nextNode;
-    if (!(nextNode = node.firstChild)) {
-      if (node.nodeType == 1) {
-        handler.end(node.nodeName.toLowerCase());
-      }
-      nextNode = node.nextSibling;
-      if (!nextNode) {
-        while (nextNode == null) {
-          node = node.parentNode;
-          if (node === inertBodyElement) break;
-          nextNode = node.nextSibling;
-          if (node.nodeType == 1) {
-            handler.end(node.nodeName.toLowerCase());
-          }
+    //mXSS protection
+    var mXSSAttempts = 5;
+    do {
+        if (mXSSAttempts === 0) {
+            throw $sanitizeMinErr('uinput', "Failed to sanitize html because the input is unstable");
         }
-      }
-    }
-    node = nextNode;
-  }
+        mXSSAttempts--;
 
-  while (node = inertBodyElement.firstChild) {
-    inertBodyElement.removeChild(node);
-  }
+        // strip custom-namespaced attributes on IE<=11
+        if (document.documentMode <= 11) {
+            stripCustomNsAttrs(inertBodyElement);
+        }
+        html = inertBodyElement.innerHTML; //trigger mXSS
+        inertBodyElement.innerHTML = html;
+    } while (html !== inertBodyElement.innerHTML);
+
+    var node = inertBodyElement.firstChild;
+    while (node) {
+        switch (node.nodeType) {
+            case 1: // ELEMENT_NODE
+                handler.start(node.nodeName.toLowerCase(), attrToMap(node.attributes));
+                break;
+            case 3: // TEXT NODE
+                handler.chars(node.textContent);
+                break;
+        }
+
+        var nextNode;
+        if (!(nextNode = node.firstChild)) {
+            if (node.nodeType == 1) {
+                handler.end(node.nodeName.toLowerCase());
+            }
+            nextNode = node.nextSibling;
+            if (!nextNode) {
+                while (nextNode == null) {
+                    node = node.parentNode;
+                    if (node === inertBodyElement) break;
+                    nextNode = node.nextSibling;
+                    if (node.nodeType == 1) {
+                        handler.end(node.nodeName.toLowerCase());
+                    }
+                }
+            }
+        }
+        node = nextNode;
+    }
+
+    while (node = inertBodyElement.firstChild) {
+        inertBodyElement.removeChild(node);
+    }
 }
 
 function attrToMap(attrs) {
-  var map = {};
-  for (var i = 0, ii = attrs.length; i < ii; i++) {
-    var attr = attrs[i];
-    map[attr.name] = attr.value;
-  }
-  return map;
+    var map = {};
+    for (var i = 0, ii = attrs.length; i < ii; i++) {
+        var attr = attrs[i];
+        map[attr.name] = attr.value;
+    }
+    return map;
 }
 
 
@@ -405,18 +405,13 @@ function attrToMap(attrs) {
  * @returns {string} escaped text
  */
 function encodeEntities(value) {
-  return value.
-    replace(/&/g, '&amp;').
-    replace(SURROGATE_PAIR_REGEXP, function(value) {
-      var hi = value.charCodeAt(0);
-      var low = value.charCodeAt(1);
-      return '&#' + (((hi - 0xD800) * 0x400) + (low - 0xDC00) + 0x10000) + ';';
-    }).
-    replace(NON_ALPHANUMERIC_REGEXP, function(value) {
-      return '&#' + value.charCodeAt(0) + ';';
-    }).
-    replace(/</g, '&lt;').
-    replace(/>/g, '&gt;');
+    return value.replace(/&/g, '&amp;').replace(SURROGATE_PAIR_REGEXP, function (value) {
+        var hi = value.charCodeAt(0);
+        var low = value.charCodeAt(1);
+        return '&#' + (((hi - 0xD800) * 0x400) + (low - 0xDC00) + 0x10000) + ';';
+    }).replace(NON_ALPHANUMERIC_REGEXP, function (value) {
+        return '&#' + value.charCodeAt(0) + ';';
+    }).replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
 /**
@@ -430,49 +425,49 @@ function encodeEntities(value) {
  * }
  */
 function htmlSanitizeWriter(buf, uriValidator) {
-  var ignoreCurrentElement = false;
-  var out = angular.bind(buf, buf.push);
-  return {
-    start: function(tag, attrs) {
-      tag = angular.lowercase(tag);
-      if (!ignoreCurrentElement && blockedElements[tag]) {
-        ignoreCurrentElement = tag;
-      }
-      if (!ignoreCurrentElement && validElements[tag] === true) {
-        out('<');
-        out(tag);
-        angular.forEach(attrs, function(value, key) {
-          var lkey=angular.lowercase(key);
-          var isImage = (tag === 'img' && lkey === 'src') || (lkey === 'background');
-          if (validAttrs[lkey] === true &&
-            (uriAttrs[lkey] !== true || uriValidator(value, isImage))) {
-            out(' ');
-            out(key);
-            out('="');
-            out(encodeEntities(value));
-            out('"');
-          }
-        });
-        out('>');
-      }
-    },
-    end: function(tag) {
-      tag = angular.lowercase(tag);
-      if (!ignoreCurrentElement && validElements[tag] === true && voidElements[tag] !== true) {
-        out('</');
-        out(tag);
-        out('>');
-      }
-      if (tag == ignoreCurrentElement) {
-        ignoreCurrentElement = false;
-      }
-    },
-    chars: function(chars) {
-      if (!ignoreCurrentElement) {
-        out(encodeEntities(chars));
-      }
-    }
-  };
+    var ignoreCurrentElement = false;
+    var out = angular.bind(buf, buf.push);
+    return {
+        start: function (tag, attrs) {
+            tag = angular.lowercase(tag);
+            if (!ignoreCurrentElement && blockedElements[tag]) {
+                ignoreCurrentElement = tag;
+            }
+            if (!ignoreCurrentElement && validElements[tag] === true) {
+                out('<');
+                out(tag);
+                angular.forEach(attrs, function (value, key) {
+                    var lkey = angular.lowercase(key);
+                    var isImage = (tag === 'img' && lkey === 'src') || (lkey === 'background');
+                    if (validAttrs[lkey] === true &&
+                        (uriAttrs[lkey] !== true || uriValidator(value, isImage))) {
+                        out(' ');
+                        out(key);
+                        out('="');
+                        out(encodeEntities(value));
+                        out('"');
+                    }
+                });
+                out('>');
+            }
+        },
+        end: function (tag) {
+            tag = angular.lowercase(tag);
+            if (!ignoreCurrentElement && validElements[tag] === true && voidElements[tag] !== true) {
+                out('</');
+                out(tag);
+                out('>');
+            }
+            if (tag == ignoreCurrentElement) {
+                ignoreCurrentElement = false;
+            }
+        },
+        chars: function (chars) {
+            if (!ignoreCurrentElement) {
+                out(encodeEntities(chars));
+            }
+        }
+    };
 }
 
 
@@ -484,30 +479,29 @@ function htmlSanitizeWriter(buf, uriValidator) {
  * @param node Root element to process
  */
 function stripCustomNsAttrs(node) {
-  if (node.nodeType === Node.ELEMENT_NODE) {
-    var attrs = node.attributes;
-    for (var i = 0, l = attrs.length; i < l; i++) {
-      var attrNode = attrs[i];
-      var attrName = attrNode.name.toLowerCase();
-      if (attrName === 'xmlns:ns1' || attrName.indexOf('ns1:') === 0) {
-        node.removeAttributeNode(attrNode);
-        i--;
-        l--;
-      }
+    if (node.nodeType === Node.ELEMENT_NODE) {
+        var attrs = node.attributes;
+        for (var i = 0, l = attrs.length; i < l; i++) {
+            var attrNode = attrs[i];
+            var attrName = attrNode.name.toLowerCase();
+            if (attrName === 'xmlns:ns1' || attrName.indexOf('ns1:') === 0) {
+                node.removeAttributeNode(attrNode);
+                i--;
+                l--;
+            }
+        }
     }
-  }
 
-  var nextNode = node.firstChild;
-  if (nextNode) {
-    stripCustomNsAttrs(nextNode);
-  }
+    var nextNode = node.firstChild;
+    if (nextNode) {
+        stripCustomNsAttrs(nextNode);
+    }
 
-  nextNode = node.nextSibling;
-  if (nextNode) {
-    stripCustomNsAttrs(nextNode);
-  }
+    nextNode = node.nextSibling;
+    if (nextNode) {
+        stripCustomNsAttrs(nextNode);
+    }
 }
-
 
 
 // define ngSanitize module and register $sanitize service

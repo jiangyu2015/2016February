@@ -38,47 +38,47 @@ ngRouteModule.directive('ngView', ngViewFillContentFactory);
  *                  - Otherwise enable scrolling only if the `autoscroll` attribute value evaluated
  *                    as an expression yields a truthy value.
  * @example
-    <example name="ngView-directive" module="ngViewExample"
-             deps="angular-route.js;angular-animate.js"
-             animations="true" fixBase="true">
-      <file name="index.html">
-        <div ng-controller="MainCtrl as main">
-          Choose:
-          <a href="Book/Moby">Moby</a> |
-          <a href="Book/Moby/ch/1">Moby: Ch1</a> |
-          <a href="Book/Gatsby">Gatsby</a> |
-          <a href="Book/Gatsby/ch/4?key=value">Gatsby: Ch4</a> |
-          <a href="Book/Scarlet">Scarlet Letter</a><br/>
+ <example name="ngView-directive" module="ngViewExample"
+ deps="angular-route.js;angular-animate.js"
+ animations="true" fixBase="true">
+ <file name="index.html">
+ <div ng-controller="MainCtrl as main">
+ Choose:
+ <a href="Book/Moby">Moby</a> |
+ <a href="Book/Moby/ch/1">Moby: Ch1</a> |
+ <a href="Book/Gatsby">Gatsby</a> |
+ <a href="Book/Gatsby/ch/4?key=value">Gatsby: Ch4</a> |
+ <a href="Book/Scarlet">Scarlet Letter</a><br/>
 
-          <div class="view-animate-container">
-            <div ng-view class="view-animate"></div>
-          </div>
-          <hr />
+ <div class="view-animate-container">
+ <div ng-view class="view-animate"></div>
+ </div>
+ <hr />
 
-          <pre>$location.path() = {{main.$location.path()}}</pre>
-          <pre>$route.current.templateUrl = {{main.$route.current.templateUrl}}</pre>
-          <pre>$route.current.params = {{main.$route.current.params}}</pre>
-          <pre>$routeParams = {{main.$routeParams}}</pre>
-        </div>
-      </file>
+ <pre>$location.path() = {{main.$location.path()}}</pre>
+ <pre>$route.current.templateUrl = {{main.$route.current.templateUrl}}</pre>
+ <pre>$route.current.params = {{main.$route.current.params}}</pre>
+ <pre>$routeParams = {{main.$routeParams}}</pre>
+ </div>
+ </file>
 
-      <file name="book.html">
-        <div>
-          controller: {{book.name}}<br />
-          Book Id: {{book.params.bookId}}<br />
-        </div>
-      </file>
+ <file name="book.html">
+ <div>
+ controller: {{book.name}}<br />
+ Book Id: {{book.params.bookId}}<br />
+ </div>
+ </file>
 
-      <file name="chapter.html">
-        <div>
-          controller: {{chapter.name}}<br />
-          Book Id: {{chapter.params.bookId}}<br />
-          Chapter Id: {{chapter.params.chapterId}}
-        </div>
-      </file>
+ <file name="chapter.html">
+ <div>
+ controller: {{chapter.name}}<br />
+ Book Id: {{chapter.params.bookId}}<br />
+ Chapter Id: {{chapter.params.chapterId}}
+ </div>
+ </file>
 
-      <file name="animations.css">
-        .view-animate-container {
+ <file name="animations.css">
+ .view-animate-container {
           position:relative;
           height:100px!important;
           background:white;
@@ -87,11 +87,11 @@ ngRouteModule.directive('ngView', ngViewFillContentFactory);
           overflow:hidden;
         }
 
-        .view-animate {
+ .view-animate {
           padding:10px;
         }
 
-        .view-animate.ng-enter, .view-animate.ng-leave {
+ .view-animate.ng-enter, .view-animate.ng-leave {
           transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 1.5s;
 
           display:block;
@@ -106,21 +106,21 @@ ngRouteModule.directive('ngView', ngViewFillContentFactory);
           padding:10px;
         }
 
-        .view-animate.ng-enter {
+ .view-animate.ng-enter {
           left:100%;
         }
-        .view-animate.ng-enter.ng-enter-active {
+ .view-animate.ng-enter.ng-enter-active {
           left:0;
         }
-        .view-animate.ng-leave.ng-leave-active {
+ .view-animate.ng-leave.ng-leave-active {
           left:-100%;
         }
-      </file>
+ </file>
 
-      <file name="script.js">
-        angular.module('ngViewExample', ['ngRoute', 'ngAnimate'])
-          .config(['$routeProvider', '$locationProvider',
-            function($routeProvider, $locationProvider) {
+ <file name="script.js">
+ angular.module('ngViewExample', ['ngRoute', 'ngAnimate'])
+ .config(['$routeProvider', '$locationProvider',
+ function($routeProvider, $locationProvider) {
               $routeProvider
                 .when('/Book/:bookId', {
                   templateUrl: 'book.html',
@@ -135,25 +135,25 @@ ngRouteModule.directive('ngView', ngViewFillContentFactory);
 
               $locationProvider.html5Mode(true);
           }])
-          .controller('MainCtrl', ['$route', '$routeParams', '$location',
-            function($route, $routeParams, $location) {
+ .controller('MainCtrl', ['$route', '$routeParams', '$location',
+ function($route, $routeParams, $location) {
               this.$route = $route;
               this.$location = $location;
               this.$routeParams = $routeParams;
           }])
-          .controller('BookCtrl', ['$routeParams', function($routeParams) {
+ .controller('BookCtrl', ['$routeParams', function($routeParams) {
             this.name = "BookCtrl";
             this.params = $routeParams;
           }])
-          .controller('ChapterCtrl', ['$routeParams', function($routeParams) {
+ .controller('ChapterCtrl', ['$routeParams', function($routeParams) {
             this.name = "ChapterCtrl";
             this.params = $routeParams;
           }]);
 
-      </file>
+ </file>
 
-      <file name="protractor.js" type="protractor">
-        it('should load and compile correct template', function() {
+ <file name="protractor.js" type="protractor">
+ it('should load and compile correct template', function() {
           element(by.linkText('Moby: Ch1')).click();
           var content = element(by.css('[ng-view]')).getText();
           expect(content).toMatch(/controller\: ChapterCtrl/);
@@ -166,8 +166,8 @@ ngRouteModule.directive('ngView', ngViewFillContentFactory);
           expect(content).toMatch(/controller\: BookCtrl/);
           expect(content).toMatch(/Book Id\: Scarlet/);
         });
-      </file>
-    </example>
+ </file>
+ </example>
  */
 
 
@@ -180,74 +180,74 @@ ngRouteModule.directive('ngView', ngViewFillContentFactory);
  */
 ngViewFactory.$inject = ['$route', '$anchorScroll', '$animate'];
 function ngViewFactory($route, $anchorScroll, $animate) {
-  return {
-    restrict: 'ECA',
-    terminal: true,
-    priority: 400,
-    transclude: 'element',
-    link: function(scope, $element, attr, ctrl, $transclude) {
-        var currentScope,
-            currentElement,
-            previousLeaveAnimation,
-            autoScrollExp = attr.autoscroll,
-            onloadExp = attr.onload || '';
+    return {
+        restrict: 'ECA',
+        terminal: true,
+        priority: 400,
+        transclude: 'element',
+        link: function (scope, $element, attr, ctrl, $transclude) {
+            var currentScope,
+                currentElement,
+                previousLeaveAnimation,
+                autoScrollExp = attr.autoscroll,
+                onloadExp = attr.onload || '';
 
-        scope.$on('$routeChangeSuccess', update);
-        update();
+            scope.$on('$routeChangeSuccess', update);
+            update();
 
-        function cleanupLastView() {
-          if (previousLeaveAnimation) {
-            $animate.cancel(previousLeaveAnimation);
-            previousLeaveAnimation = null;
-          }
-
-          if (currentScope) {
-            currentScope.$destroy();
-            currentScope = null;
-          }
-          if (currentElement) {
-            previousLeaveAnimation = $animate.leave(currentElement);
-            previousLeaveAnimation.then(function() {
-              previousLeaveAnimation = null;
-            });
-            currentElement = null;
-          }
-        }
-
-        function update() {
-          var locals = $route.current && $route.current.locals,
-              template = locals && locals.$template;
-
-          if (angular.isDefined(template)) {
-            var newScope = scope.$new();
-            var current = $route.current;
-
-            // Note: This will also link all children of ng-view that were contained in the original
-            // html. If that content contains controllers, ... they could pollute/change the scope.
-            // However, using ng-view on an element with additional content does not make sense...
-            // Note: We can't remove them in the cloneAttchFn of $transclude as that
-            // function is called before linking the content, which would apply child
-            // directives to non existing elements.
-            var clone = $transclude(newScope, function(clone) {
-              $animate.enter(clone, null, currentElement || $element).then(function onNgViewEnter() {
-                if (angular.isDefined(autoScrollExp)
-                  && (!autoScrollExp || scope.$eval(autoScrollExp))) {
-                  $anchorScroll();
+            function cleanupLastView() {
+                if (previousLeaveAnimation) {
+                    $animate.cancel(previousLeaveAnimation);
+                    previousLeaveAnimation = null;
                 }
-              });
-              cleanupLastView();
-            });
 
-            currentElement = clone;
-            currentScope = current.scope = newScope;
-            currentScope.$emit('$viewContentLoaded');
-            currentScope.$eval(onloadExp);
-          } else {
-            cleanupLastView();
-          }
+                if (currentScope) {
+                    currentScope.$destroy();
+                    currentScope = null;
+                }
+                if (currentElement) {
+                    previousLeaveAnimation = $animate.leave(currentElement);
+                    previousLeaveAnimation.then(function () {
+                        previousLeaveAnimation = null;
+                    });
+                    currentElement = null;
+                }
+            }
+
+            function update() {
+                var locals = $route.current && $route.current.locals,
+                    template = locals && locals.$template;
+
+                if (angular.isDefined(template)) {
+                    var newScope = scope.$new();
+                    var current = $route.current;
+
+                    // Note: This will also link all children of ng-view that were contained in the original
+                    // html. If that content contains controllers, ... they could pollute/change the scope.
+                    // However, using ng-view on an element with additional content does not make sense...
+                    // Note: We can't remove them in the cloneAttchFn of $transclude as that
+                    // function is called before linking the content, which would apply child
+                    // directives to non existing elements.
+                    var clone = $transclude(newScope, function (clone) {
+                        $animate.enter(clone, null, currentElement || $element).then(function onNgViewEnter() {
+                            if (angular.isDefined(autoScrollExp)
+                                && (!autoScrollExp || scope.$eval(autoScrollExp))) {
+                                $anchorScroll();
+                            }
+                        });
+                        cleanupLastView();
+                    });
+
+                    currentElement = clone;
+                    currentScope = current.scope = newScope;
+                    currentScope.$emit('$viewContentLoaded');
+                    currentScope.$eval(onloadExp);
+                } else {
+                    cleanupLastView();
+                }
+            }
         }
-    }
-  };
+    };
 }
 
 // This directive is called during the $transclude call of the first `ngView` directive.
@@ -257,29 +257,29 @@ function ngViewFactory($route, $anchorScroll, $animate) {
 // is called.
 ngViewFillContentFactory.$inject = ['$compile', '$controller', '$route'];
 function ngViewFillContentFactory($compile, $controller, $route) {
-  return {
-    restrict: 'ECA',
-    priority: -400,
-    link: function(scope, $element) {
-      var current = $route.current,
-          locals = current.locals;
+    return {
+        restrict: 'ECA',
+        priority: -400,
+        link: function (scope, $element) {
+            var current = $route.current,
+                locals = current.locals;
 
-      $element.html(locals.$template);
+            $element.html(locals.$template);
 
-      var link = $compile($element.contents());
+            var link = $compile($element.contents());
 
-      if (current.controller) {
-        locals.$scope = scope;
-        var controller = $controller(current.controller, locals);
-        if (current.controllerAs) {
-          scope[current.controllerAs] = controller;
+            if (current.controller) {
+                locals.$scope = scope;
+                var controller = $controller(current.controller, locals);
+                if (current.controllerAs) {
+                    scope[current.controllerAs] = controller;
+                }
+                $element.data('$ngControllerController', controller);
+                $element.children().data('$ngControllerController', controller);
+            }
+            scope[current.resolveAs || '$resolve'] = locals;
+
+            link(scope);
         }
-        $element.data('$ngControllerController', controller);
-        $element.children().data('$ngControllerController', controller);
-      }
-      scope[current.resolveAs || '$resolve'] = locals;
-
-      link(scope);
-    }
-  };
+    };
 }

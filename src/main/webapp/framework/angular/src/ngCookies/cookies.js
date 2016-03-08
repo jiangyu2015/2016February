@@ -17,13 +17,13 @@
 
 
 angular.module('ngCookies', ['ng']).
-  /**
-   * @ngdoc provider
-   * @name $cookiesProvider
-   * @description
-   * Use `$cookiesProvider` to change the default behavior of the {@link ngCookies.$cookies $cookies} service.
-   * */
-   provider('$cookies', [function $CookiesProvider() {
+/**
+ * @ngdoc provider
+ * @name $cookiesProvider
+ * @description
+ * Use `$cookiesProvider` to change the default behavior of the {@link ngCookies.$cookies $cookies} service.
+ * */
+provider('$cookies', [function $CookiesProvider() {
     /**
      * @ngdoc property
      * @name $cookiesProvider#defaults
@@ -50,7 +50,7 @@ angular.module('ngCookies', ['ng']).
     var defaults = this.defaults = {};
 
     function calcOptions(options) {
-      return options ? angular.extend({}, defaults, options) : defaults;
+        return options ? angular.extend({}, defaults, options) : defaults;
     }
 
     /**
@@ -80,96 +80,96 @@ angular.module('ngCookies', ['ng']).
      *   }]);
      * ```
      */
-    this.$get = ['$$cookieReader', '$$cookieWriter', function($$cookieReader, $$cookieWriter) {
-      return {
-        /**
-         * @ngdoc method
-         * @name $cookies#get
-         *
-         * @description
-         * Returns the value of given cookie key
-         *
-         * @param {string} key Id to use for lookup.
-         * @returns {string} Raw cookie value.
-         */
-        get: function(key) {
-          return $$cookieReader()[key];
-        },
+    this.$get = ['$$cookieReader', '$$cookieWriter', function ($$cookieReader, $$cookieWriter) {
+        return {
+            /**
+             * @ngdoc method
+             * @name $cookies#get
+             *
+             * @description
+             * Returns the value of given cookie key
+             *
+             * @param {string} key Id to use for lookup.
+             * @returns {string} Raw cookie value.
+             */
+            get: function (key) {
+                return $$cookieReader()[key];
+            },
 
-        /**
-         * @ngdoc method
-         * @name $cookies#getObject
-         *
-         * @description
-         * Returns the deserialized value of given cookie key
-         *
-         * @param {string} key Id to use for lookup.
-         * @returns {Object} Deserialized cookie value.
-         */
-        getObject: function(key) {
-          var value = this.get(key);
-          return value ? angular.fromJson(value) : value;
-        },
+            /**
+             * @ngdoc method
+             * @name $cookies#getObject
+             *
+             * @description
+             * Returns the deserialized value of given cookie key
+             *
+             * @param {string} key Id to use for lookup.
+             * @returns {Object} Deserialized cookie value.
+             */
+            getObject: function (key) {
+                var value = this.get(key);
+                return value ? angular.fromJson(value) : value;
+            },
 
-        /**
-         * @ngdoc method
-         * @name $cookies#getAll
-         *
-         * @description
-         * Returns a key value object with all the cookies
-         *
-         * @returns {Object} All cookies
-         */
-        getAll: function() {
-          return $$cookieReader();
-        },
+            /**
+             * @ngdoc method
+             * @name $cookies#getAll
+             *
+             * @description
+             * Returns a key value object with all the cookies
+             *
+             * @returns {Object} All cookies
+             */
+            getAll: function () {
+                return $$cookieReader();
+            },
 
-        /**
-         * @ngdoc method
-         * @name $cookies#put
-         *
-         * @description
-         * Sets a value for given cookie key
-         *
-         * @param {string} key Id for the `value`.
-         * @param {string} value Raw value to be stored.
-         * @param {Object=} options Options object.
-         *    See {@link ngCookies.$cookiesProvider#defaults $cookiesProvider.defaults}
-         */
-        put: function(key, value, options) {
-          $$cookieWriter(key, value, calcOptions(options));
-        },
+            /**
+             * @ngdoc method
+             * @name $cookies#put
+             *
+             * @description
+             * Sets a value for given cookie key
+             *
+             * @param {string} key Id for the `value`.
+             * @param {string} value Raw value to be stored.
+             * @param {Object=} options Options object.
+             *    See {@link ngCookies.$cookiesProvider#defaults $cookiesProvider.defaults}
+             */
+            put: function (key, value, options) {
+                $$cookieWriter(key, value, calcOptions(options));
+            },
 
-        /**
-         * @ngdoc method
-         * @name $cookies#putObject
-         *
-         * @description
-         * Serializes and sets a value for given cookie key
-         *
-         * @param {string} key Id for the `value`.
-         * @param {Object} value Value to be stored.
-         * @param {Object=} options Options object.
-         *    See {@link ngCookies.$cookiesProvider#defaults $cookiesProvider.defaults}
-         */
-        putObject: function(key, value, options) {
-          this.put(key, angular.toJson(value), options);
-        },
+            /**
+             * @ngdoc method
+             * @name $cookies#putObject
+             *
+             * @description
+             * Serializes and sets a value for given cookie key
+             *
+             * @param {string} key Id for the `value`.
+             * @param {Object} value Value to be stored.
+             * @param {Object=} options Options object.
+             *    See {@link ngCookies.$cookiesProvider#defaults $cookiesProvider.defaults}
+             */
+            putObject: function (key, value, options) {
+                this.put(key, angular.toJson(value), options);
+            },
 
-        /**
-         * @ngdoc method
-         * @name $cookies#remove
-         *
-         * @description
-         * Remove given cookie
-         *
-         * @param {string} key Id of the key-value pair to delete.
-         * @param {Object=} options Options object.
-         *    See {@link ngCookies.$cookiesProvider#defaults $cookiesProvider.defaults}
-         */
-        remove: function(key, options) {
-          $$cookieWriter(key, undefined, calcOptions(options));
-        }
-      };
+            /**
+             * @ngdoc method
+             * @name $cookies#remove
+             *
+             * @description
+             * Remove given cookie
+             *
+             * @param {string} key Id of the key-value pair to delete.
+             * @param {Object=} options Options object.
+             *    See {@link ngCookies.$cookiesProvider#defaults $cookiesProvider.defaults}
+             */
+            remove: function (key, options) {
+                $$cookieWriter(key, undefined, calcOptions(options));
+            }
+        };
     }];
-  }]);
+}]);

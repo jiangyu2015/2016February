@@ -14,68 +14,68 @@
  *         The resulting string key is in 'type:hashKey' format.
  */
 function hashKey(obj, nextUidFn) {
-  var key = obj && obj.$$hashKey;
+    var key = obj && obj.$$hashKey;
 
-  if (key) {
-    if (typeof key === 'function') {
-      key = obj.$$hashKey();
+    if (key) {
+        if (typeof key === 'function') {
+            key = obj.$$hashKey();
+        }
+        return key;
     }
+
+    var objType = typeof obj;
+    if (objType == 'function' || (objType == 'object' && obj !== null)) {
+        key = obj.$$hashKey = objType + ':' + (nextUidFn || nextUid)();
+    } else {
+        key = objType + ':' + obj;
+    }
+
     return key;
-  }
-
-  var objType = typeof obj;
-  if (objType == 'function' || (objType == 'object' && obj !== null)) {
-    key = obj.$$hashKey = objType + ':' + (nextUidFn || nextUid)();
-  } else {
-    key = objType + ':' + obj;
-  }
-
-  return key;
 }
 
 /**
  * HashMap which can use objects as keys
  */
 function HashMap(array, isolatedUid) {
-  if (isolatedUid) {
-    var uid = 0;
-    this.nextUid = function() {
-      return ++uid;
-    };
-  }
-  forEach(array, this.put, this);
+    if (isolatedUid) {
+        var uid = 0;
+        this.nextUid = function () {
+            return ++uid;
+        };
+    }
+    forEach(array, this.put, this);
 }
 HashMap.prototype = {
-  /**
-   * Store key value pair
-   * @param key key to store can be any type
-   * @param value value to store can be any type
-   */
-  put: function(key, value) {
-    this[hashKey(key, this.nextUid)] = value;
-  },
+    /**
+     * Store key value pair
+     * @param key key to store can be any type
+     * @param value value to store can be any type
+     */
+    put: function (key, value) {
+        this[hashKey(key, this.nextUid)] = value;
+    },
 
-  /**
-   * @param key
-   * @returns {Object} the value for the key
-   */
-  get: function(key) {
-    return this[hashKey(key, this.nextUid)];
-  },
+    /**
+     * @param key
+     * @returns {Object} the value for the key
+     */
+    get: function (key) {
+        return this[hashKey(key, this.nextUid)];
+    },
 
-  /**
-   * Remove the key/value pair
-   * @param key
-   */
-  remove: function(key) {
-    var value = this[key = hashKey(key, this.nextUid)];
-    delete this[key];
-    return value;
-  }
+    /**
+     * Remove the key/value pair
+     * @param key
+     */
+    remove: function (key) {
+        var value = this[key = hashKey(key, this.nextUid)];
+        delete this[key];
+        return value;
+    }
 };
 
-var $$HashMapProvider = [function() {
-  this.$get = [function() {
-    return HashMap;
-  }];
+var $$HashMapProvider = [function () {
+    this.$get = [function () {
+        return HashMap;
+    }];
 }];

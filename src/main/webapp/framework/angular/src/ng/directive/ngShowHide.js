@@ -99,27 +99,27 @@ var NG_HIDE_IN_PROGRESS_CLASS = 'ng-hide-animate';
  *     then the element is shown or hidden respectively.
  *
  * @example
-  <example module="ngAnimate" deps="angular-animate.js" animations="true">
-    <file name="index.html">
-      Click me: <input type="checkbox" ng-model="checked" aria-label="Toggle ngHide"><br/>
-      <div>
-        Show:
-        <div class="check-element animate-show" ng-show="checked">
-          <span class="glyphicon glyphicon-thumbs-up"></span> I show up when your checkbox is checked.
-        </div>
-      </div>
-      <div>
-        Hide:
-        <div class="check-element animate-show" ng-hide="checked">
-          <span class="glyphicon glyphicon-thumbs-down"></span> I hide when your checkbox is checked.
-        </div>
-      </div>
-    </file>
-    <file name="glyphicons.css">
-      @import url(../../components/bootstrap-3.1.1/css/bootstrap.css);
-    </file>
-    <file name="animations.css">
-      .animate-show {
+ <example module="ngAnimate" deps="angular-animate.js" animations="true">
+ <file name="index.html">
+ Click me: <input type="checkbox" ng-model="checked" aria-label="Toggle ngHide"><br/>
+ <div>
+ Show:
+ <div class="check-element animate-show" ng-show="checked">
+ <span class="glyphicon glyphicon-thumbs-up"></span> I show up when your checkbox is checked.
+ </div>
+ </div>
+ <div>
+ Hide:
+ <div class="check-element animate-show" ng-hide="checked">
+ <span class="glyphicon glyphicon-thumbs-down"></span> I hide when your checkbox is checked.
+ </div>
+ </div>
+ </file>
+ <file name="glyphicons.css">
+ @import url(../../components/bootstrap-3.1.1/css/bootstrap.css);
+ </file>
+ <file name="animations.css">
+ .animate-show {
         line-height: 20px;
         opacity: 1;
         padding: 10px;
@@ -127,27 +127,27 @@ var NG_HIDE_IN_PROGRESS_CLASS = 'ng-hide-animate';
         background: white;
       }
 
-      .animate-show.ng-hide-add, .animate-show.ng-hide-remove {
+ .animate-show.ng-hide-add, .animate-show.ng-hide-remove {
         transition: all linear 0.5s;
       }
 
-      .animate-show.ng-hide {
+ .animate-show.ng-hide {
         line-height: 0;
         opacity: 0;
         padding: 0 10px;
       }
 
-      .check-element {
+ .check-element {
         padding: 10px;
         border: 1px solid black;
         background: white;
       }
-    </file>
-    <file name="protractor.js" type="protractor">
-      var thumbsUp = element(by.css('span.glyphicon-thumbs-up'));
-      var thumbsDown = element(by.css('span.glyphicon-thumbs-down'));
+ </file>
+ <file name="protractor.js" type="protractor">
+ var thumbsUp = element(by.css('span.glyphicon-thumbs-up'));
+ var thumbsDown = element(by.css('span.glyphicon-thumbs-down'));
 
-      it('should check ng-show / ng-hide', function() {
+ it('should check ng-show / ng-hide', function() {
         expect(thumbsUp.isDisplayed()).toBeFalsy();
         expect(thumbsDown.isDisplayed()).toBeTruthy();
 
@@ -156,25 +156,25 @@ var NG_HIDE_IN_PROGRESS_CLASS = 'ng-hide-animate';
         expect(thumbsUp.isDisplayed()).toBeTruthy();
         expect(thumbsDown.isDisplayed()).toBeFalsy();
       });
-    </file>
-  </example>
+ </file>
+ </example>
  */
-var ngShowDirective = ['$animate', function($animate) {
-  return {
-    restrict: 'A',
-    multiElement: true,
-    link: function(scope, element, attr) {
-      scope.$watch(attr.ngShow, function ngShowWatchAction(value) {
-        // we're adding a temporary, animation-specific class for ng-hide since this way
-        // we can control when the element is actually displayed on screen without having
-        // to have a global/greedy CSS selector that breaks when other animations are run.
-        // Read: https://github.com/angular/angular.js/issues/9103#issuecomment-58335845
-        $animate[value ? 'removeClass' : 'addClass'](element, NG_HIDE_CLASS, {
-          tempClasses: NG_HIDE_IN_PROGRESS_CLASS
-        });
-      });
-    }
-  };
+var ngShowDirective = ['$animate', function ($animate) {
+    return {
+        restrict: 'A',
+        multiElement: true,
+        link: function (scope, element, attr) {
+            scope.$watch(attr.ngShow, function ngShowWatchAction(value) {
+                // we're adding a temporary, animation-specific class for ng-hide since this way
+                // we can control when the element is actually displayed on screen without having
+                // to have a global/greedy CSS selector that breaks when other animations are run.
+                // Read: https://github.com/angular/angular.js/issues/9103#issuecomment-58335845
+                $animate[value ? 'removeClass' : 'addClass'](element, NG_HIDE_CLASS, {
+                    tempClasses: NG_HIDE_IN_PROGRESS_CLASS
+                });
+            });
+        }
+    };
 }];
 
 
@@ -266,27 +266,27 @@ var ngShowDirective = ['$animate', function($animate) {
  *     the element is shown or hidden respectively.
  *
  * @example
-  <example module="ngAnimate" deps="angular-animate.js" animations="true">
-    <file name="index.html">
-      Click me: <input type="checkbox" ng-model="checked" aria-label="Toggle ngShow"><br/>
-      <div>
-        Show:
-        <div class="check-element animate-hide" ng-show="checked">
-          <span class="glyphicon glyphicon-thumbs-up"></span> I show up when your checkbox is checked.
-        </div>
-      </div>
-      <div>
-        Hide:
-        <div class="check-element animate-hide" ng-hide="checked">
-          <span class="glyphicon glyphicon-thumbs-down"></span> I hide when your checkbox is checked.
-        </div>
-      </div>
-    </file>
-    <file name="glyphicons.css">
-      @import url(../../components/bootstrap-3.1.1/css/bootstrap.css);
-    </file>
-    <file name="animations.css">
-      .animate-hide {
+ <example module="ngAnimate" deps="angular-animate.js" animations="true">
+ <file name="index.html">
+ Click me: <input type="checkbox" ng-model="checked" aria-label="Toggle ngShow"><br/>
+ <div>
+ Show:
+ <div class="check-element animate-hide" ng-show="checked">
+ <span class="glyphicon glyphicon-thumbs-up"></span> I show up when your checkbox is checked.
+ </div>
+ </div>
+ <div>
+ Hide:
+ <div class="check-element animate-hide" ng-hide="checked">
+ <span class="glyphicon glyphicon-thumbs-down"></span> I hide when your checkbox is checked.
+ </div>
+ </div>
+ </file>
+ <file name="glyphicons.css">
+ @import url(../../components/bootstrap-3.1.1/css/bootstrap.css);
+ </file>
+ <file name="animations.css">
+ .animate-hide {
         transition: all linear 0.5s;
         line-height: 20px;
         opacity: 1;
@@ -295,23 +295,23 @@ var ngShowDirective = ['$animate', function($animate) {
         background: white;
       }
 
-      .animate-hide.ng-hide {
+ .animate-hide.ng-hide {
         line-height: 0;
         opacity: 0;
         padding: 0 10px;
       }
 
-      .check-element {
+ .check-element {
         padding: 10px;
         border: 1px solid black;
         background: white;
       }
-    </file>
-    <file name="protractor.js" type="protractor">
-      var thumbsUp = element(by.css('span.glyphicon-thumbs-up'));
-      var thumbsDown = element(by.css('span.glyphicon-thumbs-down'));
+ </file>
+ <file name="protractor.js" type="protractor">
+ var thumbsUp = element(by.css('span.glyphicon-thumbs-up'));
+ var thumbsDown = element(by.css('span.glyphicon-thumbs-down'));
 
-      it('should check ng-show / ng-hide', function() {
+ it('should check ng-show / ng-hide', function() {
         expect(thumbsUp.isDisplayed()).toBeFalsy();
         expect(thumbsDown.isDisplayed()).toBeTruthy();
 
@@ -320,21 +320,21 @@ var ngShowDirective = ['$animate', function($animate) {
         expect(thumbsUp.isDisplayed()).toBeTruthy();
         expect(thumbsDown.isDisplayed()).toBeFalsy();
       });
-    </file>
-  </example>
+ </file>
+ </example>
  */
-var ngHideDirective = ['$animate', function($animate) {
-  return {
-    restrict: 'A',
-    multiElement: true,
-    link: function(scope, element, attr) {
-      scope.$watch(attr.ngHide, function ngHideWatchAction(value) {
-        // The comment inside of the ngShowDirective explains why we add and
-        // remove a temporary class for the show/hide animation
-        $animate[value ? 'addClass' : 'removeClass'](element,NG_HIDE_CLASS, {
-          tempClasses: NG_HIDE_IN_PROGRESS_CLASS
-        });
-      });
-    }
-  };
+var ngHideDirective = ['$animate', function ($animate) {
+    return {
+        restrict: 'A',
+        multiElement: true,
+        link: function (scope, element, attr) {
+            scope.$watch(attr.ngHide, function ngHideWatchAction(value) {
+                // The comment inside of the ngShowDirective explains why we add and
+                // remove a temporary class for the show/hide animation
+                $animate[value ? 'addClass' : 'removeClass'](element, NG_HIDE_CLASS, {
+                    tempClasses: NG_HIDE_IN_PROGRESS_CLASS
+                });
+            });
+        }
+    };
 }];

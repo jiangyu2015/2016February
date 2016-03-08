@@ -2,17 +2,17 @@
 
 /* global angularAnimateModule: true,
 
-   ngAnimateSwapDirective,
-   $$AnimateAsyncRunFactory,
-   $$rAFSchedulerFactory,
-   $$AnimateChildrenDirective,
-   $$AnimateQueueProvider,
-   $$AnimationProvider,
-   $AnimateCssProvider,
-   $$AnimateCssDriverProvider,
-   $$AnimateJsProvider,
-   $$AnimateJsDriverProvider,
-*/
+ ngAnimateSwapDirective,
+ $$AnimateAsyncRunFactory,
+ $$rAFSchedulerFactory,
+ $$AnimateChildrenDirective,
+ $$AnimateQueueProvider,
+ $$AnimationProvider,
+ $AnimateCssProvider,
+ $$AnimateCssDriverProvider,
+ $$AnimateJsProvider,
+ $$AnimateJsDriverProvider,
+ */
 
 /**
  * @ngdoc module
@@ -540,21 +540,21 @@
  *
  * ### Anchoring Demo
  *
-  <example module="anchoringExample"
-           name="anchoringExample"
-           id="anchoringExample"
-           deps="angular-animate.js;angular-route.js"
-           animations="true">
-    <file name="index.html">
-      <a href="#/">Home</a>
-      <hr />
-      <div class="view-container">
-        <div ng-view class="view"></div>
-      </div>
-    </file>
-    <file name="script.js">
-      angular.module('anchoringExample', ['ngAnimate', 'ngRoute'])
-        .config(['$routeProvider', function($routeProvider) {
+ <example module="anchoringExample"
+ name="anchoringExample"
+ id="anchoringExample"
+ deps="angular-animate.js;angular-route.js"
+ animations="true">
+ <file name="index.html">
+ <a href="#/">Home</a>
+ <hr />
+ <div class="view-container">
+ <div ng-view class="view"></div>
+ </div>
+ </file>
+ <file name="script.js">
+ angular.module('anchoringExample', ['ngAnimate', 'ngRoute'])
+ .config(['$routeProvider', function($routeProvider) {
           $routeProvider.when('/', {
             templateUrl: 'home.html',
             controller: 'HomeController as home'
@@ -564,7 +564,7 @@
             controller: 'ProfileController as profile'
           });
         }])
-        .run(['$rootScope', function($rootScope) {
+ .run(['$rootScope', function($rootScope) {
           $rootScope.records = [
             { id:1, title: "Miss Beulah Roob" },
             { id:2, title: "Trent Morissette" },
@@ -578,70 +578,70 @@
             { id:10, title: "Alexandrea Sauer" }
           ];
         }])
-        .controller('HomeController', [function() {
+ .controller('HomeController', [function() {
           //empty
         }])
-        .controller('ProfileController', ['$rootScope', '$routeParams', function($rootScope, $routeParams) {
+ .controller('ProfileController', ['$rootScope', '$routeParams', function($rootScope, $routeParams) {
           var index = parseInt($routeParams.id, 10);
           var record = $rootScope.records[index - 1];
 
           this.title = record.title;
           this.id = record.id;
         }]);
-    </file>
-    <file name="home.html">
-      <h2>Welcome to the home page</h1>
-      <p>Please click on an element</p>
-      <a class="record"
-         ng-href="#/profile/{{ record.id }}"
-         ng-animate-ref="{{ record.id }}"
-         ng-repeat="record in records">
-        {{ record.title }}
-      </a>
-    </file>
-    <file name="profile.html">
-      <div class="profile record" ng-animate-ref="{{ profile.id }}">
-        {{ profile.title }}
-      </div>
-    </file>
-    <file name="animations.css">
-      .record {
+ </file>
+ <file name="home.html">
+ <h2>Welcome to the home page</h1>
+ <p>Please click on an element</p>
+ <a class="record"
+ ng-href="#/profile/{{ record.id }}"
+ ng-animate-ref="{{ record.id }}"
+ ng-repeat="record in records">
+ {{ record.title }}
+ </a>
+ </file>
+ <file name="profile.html">
+ <div class="profile record" ng-animate-ref="{{ profile.id }}">
+ {{ profile.title }}
+ </div>
+ </file>
+ <file name="animations.css">
+ .record {
         display:block;
         font-size:20px;
       }
-      .profile {
+ .profile {
         background:black;
         color:white;
         font-size:100px;
       }
-      .view-container {
+ .view-container {
         position:relative;
       }
-      .view-container > .view.ng-animate {
+ .view-container > .view.ng-animate {
         position:absolute;
         top:0;
         left:0;
         width:100%;
         min-height:500px;
       }
-      .view.ng-enter, .view.ng-leave,
-      .record.ng-anchor {
+ .view.ng-enter, .view.ng-leave,
+ .record.ng-anchor {
         transition:0.5s linear all;
       }
-      .view.ng-enter {
+ .view.ng-enter {
         transform:translateX(100%);
       }
-      .view.ng-enter.ng-enter-active, .view.ng-leave {
+ .view.ng-enter.ng-enter-active, .view.ng-leave {
         transform:translateX(0%);
       }
-      .view.ng-leave.ng-leave-active {
+ .view.ng-leave.ng-leave-active {
         transform:translateX(-100%);
       }
-      .record.ng-anchor-out {
+ .record.ng-anchor-out {
         background:red;
       }
-    </file>
-  </example>
+ </file>
+ </example>
  *
  * ### How is the element transported?
  *
@@ -741,16 +741,16 @@
  * Click here {@link ng.$animate to learn more about animations with `$animate`}.
  */
 angular.module('ngAnimate', [])
-  .directive('ngAnimateSwap', ngAnimateSwapDirective)
+    .directive('ngAnimateSwap', ngAnimateSwapDirective)
 
-  .directive('ngAnimateChildren', $$AnimateChildrenDirective)
-  .factory('$$rAFScheduler', $$rAFSchedulerFactory)
+    .directive('ngAnimateChildren', $$AnimateChildrenDirective)
+    .factory('$$rAFScheduler', $$rAFSchedulerFactory)
 
-  .provider('$$animateQueue', $$AnimateQueueProvider)
-  .provider('$$animation', $$AnimationProvider)
+    .provider('$$animateQueue', $$AnimateQueueProvider)
+    .provider('$$animation', $$AnimationProvider)
 
-  .provider('$animateCss', $AnimateCssProvider)
-  .provider('$$animateCssDriver', $$AnimateCssDriverProvider)
+    .provider('$animateCss', $AnimateCssProvider)
+    .provider('$$animateCssDriver', $$AnimateCssDriverProvider)
 
-  .provider('$$animateJs', $$AnimateJsProvider)
-  .provider('$$animateJsDriver', $$AnimateJsDriverProvider);
+    .provider('$$animateJs', $$AnimateJsProvider)
+    .provider('$$animateJsDriver', $$AnimateJsDriverProvider);

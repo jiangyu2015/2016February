@@ -7,33 +7,37 @@
  * @param {string} descName Name of the block
  * @param {Object} parent describe or undefined if the root.
  */
-angular.scenario.Describe = function(descName, parent) {
-  this.only = parent && parent.only;
-  this.beforeEachFns = [];
-  this.afterEachFns = [];
-  this.its = [];
-  this.children = [];
-  this.name = descName;
-  this.parent = parent;
-  this.id = angular.scenario.Describe.id++;
+angular.scenario.Describe = function (descName, parent) {
+    this.only = parent && parent.only;
+    this.beforeEachFns = [];
+    this.afterEachFns = [];
+    this.its = [];
+    this.children = [];
+    this.name = descName;
+    this.parent = parent;
+    this.id = angular.scenario.Describe.id++;
 
-  /**
-   * Calls all before functions.
-   */
-  var beforeEachFns = this.beforeEachFns;
-  this.setupBefore = function() {
-    if (parent) parent.setupBefore.call(this);
-    angular.forEach(beforeEachFns, function(fn) { fn.call(this); }, this);
-  };
+    /**
+     * Calls all before functions.
+     */
+    var beforeEachFns = this.beforeEachFns;
+    this.setupBefore = function () {
+        if (parent) parent.setupBefore.call(this);
+        angular.forEach(beforeEachFns, function (fn) {
+            fn.call(this);
+        }, this);
+    };
 
-  /**
-   * Calls all after functions.
-   */
-  var afterEachFns = this.afterEachFns;
-  this.setupAfter  = function() {
-    angular.forEach(afterEachFns, function(fn) { fn.call(this); }, this);
-    if (parent) parent.setupAfter.call(this);
-  };
+    /**
+     * Calls all after functions.
+     */
+    var afterEachFns = this.afterEachFns;
+    this.setupAfter = function () {
+        angular.forEach(afterEachFns, function (fn) {
+            fn.call(this);
+        }, this);
+        if (parent) parent.setupAfter.call(this);
+    };
 };
 
 // Shared Unique ID generator for every describe block
@@ -47,8 +51,8 @@ angular.scenario.Describe.specId = 0;
  *
  * @param {function()} body Body of the block.
  */
-angular.scenario.Describe.prototype.beforeEach = function(body) {
-  this.beforeEachFns.push(body);
+angular.scenario.Describe.prototype.beforeEach = function (body) {
+    this.beforeEachFns.push(body);
 };
 
 /**
@@ -56,8 +60,8 @@ angular.scenario.Describe.prototype.beforeEach = function(body) {
  *
  * @param {function()} body Body of the block.
  */
-angular.scenario.Describe.prototype.afterEach = function(body) {
-  this.afterEachFns.push(body);
+angular.scenario.Describe.prototype.afterEach = function (body) {
+    this.afterEachFns.push(body);
 };
 
 /**
@@ -66,10 +70,10 @@ angular.scenario.Describe.prototype.afterEach = function(body) {
  * @param {string} name Name of the block. Appended to the parent block's name.
  * @param {function()} body Body of the block.
  */
-angular.scenario.Describe.prototype.describe = function(name, body) {
-  var child = new angular.scenario.Describe(name, this);
-  this.children.push(child);
-  body.call(child);
+angular.scenario.Describe.prototype.describe = function (name, body) {
+    var child = new angular.scenario.Describe(name, this);
+    this.children.push(child);
+    body.call(child);
 };
 
 /**
@@ -78,11 +82,11 @@ angular.scenario.Describe.prototype.describe = function(name, body) {
  * @param {string} name Name of the test.
  * @param {function()} body Body of the block.
  */
-angular.scenario.Describe.prototype.ddescribe = function(name, body) {
-  var child = new angular.scenario.Describe(name, this);
-  child.only = true;
-  this.children.push(child);
-  body.call(child);
+angular.scenario.Describe.prototype.ddescribe = function (name, body) {
+    var child = new angular.scenario.Describe(name, this);
+    child.only = true;
+    this.children.push(child);
+    body.call(child);
 };
 
 /**
@@ -96,16 +100,16 @@ angular.scenario.Describe.prototype.xdescribe = angular.noop;
  * @param {string} name Name of the test.
  * @param {function()} body Body of the block.
  */
-angular.scenario.Describe.prototype.it = function(name, body) {
-  this.its.push({
-    id: angular.scenario.Describe.specId++,
-    definition: this,
-    only: this.only,
-    name: name,
-    before: this.setupBefore,
-    body: body,
-    after: this.setupAfter
-  });
+angular.scenario.Describe.prototype.it = function (name, body) {
+    this.its.push({
+        id: angular.scenario.Describe.specId++,
+        definition: this,
+        only: this.only,
+        name: name,
+        before: this.setupBefore,
+        body: body,
+        after: this.setupAfter
+    });
 };
 
 /**
@@ -114,9 +118,9 @@ angular.scenario.Describe.prototype.it = function(name, body) {
  * @param {string} name Name of the test.
  * @param {function()} body Body of the block.
  */
-angular.scenario.Describe.prototype.iit = function(name, body) {
-  this.it.apply(this, arguments);
-  this.its[this.its.length - 1].only = true;
+angular.scenario.Describe.prototype.iit = function (name, body) {
+    this.it.apply(this, arguments);
+    this.its[this.its.length - 1].only = true;
 };
 
 /**
@@ -137,19 +141,19 @@ angular.scenario.Describe.prototype.xit = angular.noop;
  *   after: Function
  *  }
  */
-angular.scenario.Describe.prototype.getSpecs = function() {
-  var specs = arguments[0] || [];
-  angular.forEach(this.children, function(child) {
-    child.getSpecs(specs);
-  });
-  angular.forEach(this.its, function(it) {
-    specs.push(it);
-  });
-  var only = [];
-  angular.forEach(specs, function(it) {
-    if (it.only) {
-      only.push(it);
-    }
-  });
-  return (only.length && only) || specs;
+angular.scenario.Describe.prototype.getSpecs = function () {
+    var specs = arguments[0] || [];
+    angular.forEach(this.children, function (child) {
+        child.getSpecs(specs);
+    });
+    angular.forEach(this.its, function (it) {
+        specs.push(it);
+    });
+    var only = [];
+    angular.forEach(specs, function (it) {
+        if (it.only) {
+            only.push(it);
+        }
+    });
+    return (only.length && only) || specs;
 };

@@ -43,11 +43,11 @@
  *     </div>
  *   </file>
  *   <file name="protractor.js" type="protractor">
-       var required = element(by.binding('form.input.$error.required'));
-       var model = element(by.binding('model'));
-       var input = element(by.id('input'));
+ var required = element(by.binding('form.input.$error.required'));
+ var model = element(by.binding('model'));
+ var input = element(by.id('input'));
 
-       it('should set the required error', function() {
+ it('should set the required error', function() {
          expect(required.getText()).toContain('true');
 
          input.sendKeys('123');
@@ -57,23 +57,23 @@
  *   </file>
  * </example>
  */
-var requiredDirective = function() {
-  return {
-    restrict: 'A',
-    require: '?ngModel',
-    link: function(scope, elm, attr, ctrl) {
-      if (!ctrl) return;
-      attr.required = true; // force truthy in case we are on non input element
+var requiredDirective = function () {
+    return {
+        restrict: 'A',
+        require: '?ngModel',
+        link: function (scope, elm, attr, ctrl) {
+            if (!ctrl) return;
+            attr.required = true; // force truthy in case we are on non input element
 
-      ctrl.$validators.required = function(modelValue, viewValue) {
-        return !attr.required || !ctrl.$isEmpty(viewValue);
-      };
+            ctrl.$validators.required = function (modelValue, viewValue) {
+                return !attr.required || !ctrl.$isEmpty(viewValue);
+            };
 
-      attr.$observe('required', function() {
-        ctrl.$validate();
-      });
-    }
-  };
+            attr.$observe('required', function () {
+                ctrl.$validate();
+            });
+        }
+    };
 };
 
 /**
@@ -136,10 +136,10 @@ var requiredDirective = function() {
  *     </div>
  *   </file>
  *   <file name="protractor.js" type="protractor">
-       var model = element(by.binding('model'));
-       var input = element(by.id('input'));
+ var model = element(by.binding('model'));
+ var input = element(by.id('input'));
 
-       it('should validate the input with the default pattern', function() {
+ it('should validate the input with the default pattern', function() {
          input.sendKeys('aaa');
          expect(model.getText()).not.toContain('aaa');
 
@@ -151,35 +151,35 @@ var requiredDirective = function() {
  *   </file>
  * </example>
  */
-var patternDirective = function() {
-  return {
-    restrict: 'A',
-    require: '?ngModel',
-    link: function(scope, elm, attr, ctrl) {
-      if (!ctrl) return;
+var patternDirective = function () {
+    return {
+        restrict: 'A',
+        require: '?ngModel',
+        link: function (scope, elm, attr, ctrl) {
+            if (!ctrl) return;
 
-      var regexp, patternExp = attr.ngPattern || attr.pattern;
-      attr.$observe('pattern', function(regex) {
-        if (isString(regex) && regex.length > 0) {
-          regex = new RegExp('^' + regex + '$');
+            var regexp, patternExp = attr.ngPattern || attr.pattern;
+            attr.$observe('pattern', function (regex) {
+                if (isString(regex) && regex.length > 0) {
+                    regex = new RegExp('^' + regex + '$');
+                }
+
+                if (regex && !regex.test) {
+                    throw minErr('ngPattern')('noregexp',
+                        'Expected {0} to be a RegExp but was {1}. Element: {2}', patternExp,
+                        regex, startingTag(elm));
+                }
+
+                regexp = regex || undefined;
+                ctrl.$validate();
+            });
+
+            ctrl.$validators.pattern = function (modelValue, viewValue) {
+                // HTML5 pattern constraint validates the input value, so we validate the viewValue
+                return ctrl.$isEmpty(viewValue) || isUndefined(regexp) || regexp.test(viewValue);
+            };
         }
-
-        if (regex && !regex.test) {
-          throw minErr('ngPattern')('noregexp',
-            'Expected {0} to be a RegExp but was {1}. Element: {2}', patternExp,
-            regex, startingTag(elm));
-        }
-
-        regexp = regex || undefined;
-        ctrl.$validate();
-      });
-
-      ctrl.$validators.pattern = function(modelValue, viewValue) {
-        // HTML5 pattern constraint validates the input value, so we validate the viewValue
-        return ctrl.$isEmpty(viewValue) || isUndefined(regexp) || regexp.test(viewValue);
-      };
-    }
-  };
+    };
 };
 
 /**
@@ -233,10 +233,10 @@ var patternDirective = function() {
  *     </div>
  *   </file>
  *   <file name="protractor.js" type="protractor">
-       var model = element(by.binding('model'));
-       var input = element(by.id('input'));
+ var model = element(by.binding('model'));
+ var input = element(by.id('input'));
 
-       it('should validate the input with the default maxlength', function() {
+ it('should validate the input with the default maxlength', function() {
          input.sendKeys('abcdef');
          expect(model.getText()).not.toContain('abcdef');
 
@@ -248,24 +248,24 @@ var patternDirective = function() {
  *   </file>
  * </example>
  */
-var maxlengthDirective = function() {
-  return {
-    restrict: 'A',
-    require: '?ngModel',
-    link: function(scope, elm, attr, ctrl) {
-      if (!ctrl) return;
+var maxlengthDirective = function () {
+    return {
+        restrict: 'A',
+        require: '?ngModel',
+        link: function (scope, elm, attr, ctrl) {
+            if (!ctrl) return;
 
-      var maxlength = -1;
-      attr.$observe('maxlength', function(value) {
-        var intVal = toInt(value);
-        maxlength = isNaN(intVal) ? -1 : intVal;
-        ctrl.$validate();
-      });
-      ctrl.$validators.maxlength = function(modelValue, viewValue) {
-        return (maxlength < 0) || ctrl.$isEmpty(viewValue) || (viewValue.length <= maxlength);
-      };
-    }
-  };
+            var maxlength = -1;
+            attr.$observe('maxlength', function (value) {
+                var intVal = toInt(value);
+                maxlength = isNaN(intVal) ? -1 : intVal;
+                ctrl.$validate();
+            });
+            ctrl.$validators.maxlength = function (modelValue, viewValue) {
+                return (maxlength < 0) || ctrl.$isEmpty(viewValue) || (viewValue.length <= maxlength);
+            };
+        }
+    };
 };
 
 /**
@@ -319,10 +319,10 @@ var maxlengthDirective = function() {
  *     </div>
  *   </file>
  *   <file name="protractor.js" type="protractor">
-       var model = element(by.binding('model'));
-       var input = element(by.id('input'));
+ var model = element(by.binding('model'));
+ var input = element(by.id('input'));
 
-       it('should validate the input with the default minlength', function() {
+ it('should validate the input with the default minlength', function() {
          input.sendKeys('ab');
          expect(model.getText()).not.toContain('ab');
 
@@ -332,21 +332,21 @@ var maxlengthDirective = function() {
  *   </file>
  * </example>
  */
-var minlengthDirective = function() {
-  return {
-    restrict: 'A',
-    require: '?ngModel',
-    link: function(scope, elm, attr, ctrl) {
-      if (!ctrl) return;
+var minlengthDirective = function () {
+    return {
+        restrict: 'A',
+        require: '?ngModel',
+        link: function (scope, elm, attr, ctrl) {
+            if (!ctrl) return;
 
-      var minlength = 0;
-      attr.$observe('minlength', function(value) {
-        minlength = toInt(value) || 0;
-        ctrl.$validate();
-      });
-      ctrl.$validators.minlength = function(modelValue, viewValue) {
-        return ctrl.$isEmpty(viewValue) || viewValue.length >= minlength;
-      };
-    }
-  };
+            var minlength = 0;
+            attr.$observe('minlength', function (value) {
+                minlength = toInt(value) || 0;
+                ctrl.$validate();
+            });
+            ctrl.$validators.minlength = function (modelValue, viewValue) {
+                return ctrl.$isEmpty(viewValue) || viewValue.length >= minlength;
+            };
+        }
+    };
 };

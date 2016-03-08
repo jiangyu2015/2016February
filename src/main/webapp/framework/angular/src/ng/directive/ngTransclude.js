@@ -160,34 +160,34 @@
  */
 var ngTranscludeMinErr = minErr('ngTransclude');
 var ngTranscludeDirective = ngDirective({
-  restrict: 'EAC',
-  link: function($scope, $element, $attrs, controller, $transclude) {
+    restrict: 'EAC',
+    link: function ($scope, $element, $attrs, controller, $transclude) {
 
-    if ($attrs.ngTransclude === $attrs.$attr.ngTransclude) {
-      // If the attribute is of the form: `ng-transclude="ng-transclude"`
-      // then treat it like the default
-      $attrs.ngTransclude = '';
+        if ($attrs.ngTransclude === $attrs.$attr.ngTransclude) {
+            // If the attribute is of the form: `ng-transclude="ng-transclude"`
+            // then treat it like the default
+            $attrs.ngTransclude = '';
+        }
+
+        function ngTranscludeCloneAttachFn(clone) {
+            if (clone.length) {
+                $element.empty();
+                $element.append(clone);
+            }
+        }
+
+        if (!$transclude) {
+            throw ngTranscludeMinErr('orphan',
+                'Illegal use of ngTransclude directive in the template! ' +
+                'No parent directive that requires a transclusion found. ' +
+                'Element: {0}',
+                startingTag($element));
+        }
+
+        // If there is no slot name defined or the slot name is not optional
+        // then transclude the slot
+        var slotName = $attrs.ngTransclude || $attrs.ngTranscludeSlot;
+        $transclude(ngTranscludeCloneAttachFn, null, slotName);
     }
-
-    function ngTranscludeCloneAttachFn(clone) {
-      if (clone.length) {
-        $element.empty();
-        $element.append(clone);
-      }
-    }
-
-    if (!$transclude) {
-      throw ngTranscludeMinErr('orphan',
-       'Illegal use of ngTransclude directive in the template! ' +
-       'No parent directive that requires a transclusion found. ' +
-       'Element: {0}',
-       startingTag($element));
-    }
-
-    // If there is no slot name defined or the slot name is not optional
-    // then transclude the slot
-    var slotName = $attrs.ngTransclude || $attrs.ngTranscludeSlot;
-    $transclude(ngTranscludeCloneAttachFn, null, slotName);
-  }
 });
 

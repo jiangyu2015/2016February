@@ -14,23 +14,23 @@
  * click. ({@link guide/expression#-event- Event object is available as `$event`})
  *
  * @example
-   <example>
-     <file name="index.html">
-      <button ng-click="count = count + 1" ng-init="count=0">
-        Increment
-      </button>
-      <span>
-        count: {{count}}
-      </span>
-     </file>
-     <file name="protractor.js" type="protractor">
-       it('should check ng-click', function() {
+ <example>
+ <file name="index.html">
+ <button ng-click="count = count + 1" ng-init="count=0">
+ Increment
+ </button>
+ <span>
+ count: {{count}}
+ </span>
+ </file>
+ <file name="protractor.js" type="protractor">
+ it('should check ng-click', function() {
          expect(element(by.binding('count')).getText()).toMatch('0');
          element(by.css('button')).click();
          expect(element(by.binding('count')).getText()).toMatch('1');
        });
-     </file>
-   </example>
+ </file>
+ </example>
  */
 /*
  * A collection of directives that allows creation of custom event handlers that are defined as
@@ -42,38 +42,38 @@ var ngEventDirectives = {};
 // we need to execute their event handlers asynchronously using $evalAsync,
 // so that they are not executed in an inconsistent state.
 var forceAsyncEvents = {
-  'blur': true,
-  'focus': true
+    'blur': true,
+    'focus': true
 };
 forEach(
-  'click dblclick mousedown mouseup mouseover mouseout mousemove mouseenter mouseleave keydown keyup keypress submit focus blur copy cut paste'.split(' '),
-  function(eventName) {
-    var directiveName = directiveNormalize('ng-' + eventName);
-    ngEventDirectives[directiveName] = ['$parse', '$rootScope', function($parse, $rootScope) {
-      return {
-        restrict: 'A',
-        compile: function($element, attr) {
-          // We expose the powerful $event object on the scope that provides access to the Window,
-          // etc. that isn't protected by the fast paths in $parse.  We explicitly request better
-          // checks at the cost of speed since event handler expressions are not executed as
-          // frequently as regular change detection.
-          var fn = $parse(attr[directiveName], /* interceptorFn */ null, /* expensiveChecks */ true);
-          return function ngEventHandler(scope, element) {
-            element.on(eventName, function(event) {
-              var callback = function() {
-                fn(scope, {$event:event});
-              };
-              if (forceAsyncEvents[eventName] && $rootScope.$$phase) {
-                scope.$evalAsync(callback);
-              } else {
-                scope.$apply(callback);
-              }
-            });
-          };
-        }
-      };
-    }];
-  }
+    'click dblclick mousedown mouseup mouseover mouseout mousemove mouseenter mouseleave keydown keyup keypress submit focus blur copy cut paste'.split(' '),
+    function (eventName) {
+        var directiveName = directiveNormalize('ng-' + eventName);
+        ngEventDirectives[directiveName] = ['$parse', '$rootScope', function ($parse, $rootScope) {
+            return {
+                restrict: 'A',
+                compile: function ($element, attr) {
+                    // We expose the powerful $event object on the scope that provides access to the Window,
+                    // etc. that isn't protected by the fast paths in $parse.  We explicitly request better
+                    // checks at the cost of speed since event handler expressions are not executed as
+                    // frequently as regular change detection.
+                    var fn = $parse(attr[directiveName], /* interceptorFn */ null, /* expensiveChecks */ true);
+                    return function ngEventHandler(scope, element) {
+                        element.on(eventName, function (event) {
+                            var callback = function () {
+                                fn(scope, {$event: event});
+                            };
+                            if (forceAsyncEvents[eventName] && $rootScope.$$phase) {
+                                scope.$evalAsync(callback);
+                            } else {
+                                scope.$apply(callback);
+                            }
+                        });
+                    };
+                }
+            };
+        }];
+    }
 );
 
 /**
@@ -89,14 +89,14 @@ forEach(
  * a dblclick. (The Event object is available as `$event`)
  *
  * @example
-   <example>
-     <file name="index.html">
-      <button ng-dblclick="count = count + 1" ng-init="count=0">
-        Increment (on double click)
-      </button>
-      count: {{count}}
-     </file>
-   </example>
+ <example>
+ <file name="index.html">
+ <button ng-dblclick="count = count + 1" ng-init="count=0">
+ Increment (on double click)
+ </button>
+ count: {{count}}
+ </file>
+ </example>
  */
 
 
@@ -113,14 +113,14 @@ forEach(
  * mousedown. ({@link guide/expression#-event- Event object is available as `$event`})
  *
  * @example
-   <example>
-     <file name="index.html">
-      <button ng-mousedown="count = count + 1" ng-init="count=0">
-        Increment (on mouse down)
-      </button>
-      count: {{count}}
-     </file>
-   </example>
+ <example>
+ <file name="index.html">
+ <button ng-mousedown="count = count + 1" ng-init="count=0">
+ Increment (on mouse down)
+ </button>
+ count: {{count}}
+ </file>
+ </example>
  */
 
 
@@ -137,14 +137,14 @@ forEach(
  * mouseup. ({@link guide/expression#-event- Event object is available as `$event`})
  *
  * @example
-   <example>
-     <file name="index.html">
-      <button ng-mouseup="count = count + 1" ng-init="count=0">
-        Increment (on mouse up)
-      </button>
-      count: {{count}}
-     </file>
-   </example>
+ <example>
+ <file name="index.html">
+ <button ng-mouseup="count = count + 1" ng-init="count=0">
+ Increment (on mouse up)
+ </button>
+ count: {{count}}
+ </file>
+ </example>
  */
 
 /**
@@ -160,14 +160,14 @@ forEach(
  * mouseover. ({@link guide/expression#-event- Event object is available as `$event`})
  *
  * @example
-   <example>
-     <file name="index.html">
-      <button ng-mouseover="count = count + 1" ng-init="count=0">
-        Increment (when mouse is over)
-      </button>
-      count: {{count}}
-     </file>
-   </example>
+ <example>
+ <file name="index.html">
+ <button ng-mouseover="count = count + 1" ng-init="count=0">
+ Increment (when mouse is over)
+ </button>
+ count: {{count}}
+ </file>
+ </example>
  */
 
 
@@ -184,14 +184,14 @@ forEach(
  * mouseenter. ({@link guide/expression#-event- Event object is available as `$event`})
  *
  * @example
-   <example>
-     <file name="index.html">
-      <button ng-mouseenter="count = count + 1" ng-init="count=0">
-        Increment (when mouse enters)
-      </button>
-      count: {{count}}
-     </file>
-   </example>
+ <example>
+ <file name="index.html">
+ <button ng-mouseenter="count = count + 1" ng-init="count=0">
+ Increment (when mouse enters)
+ </button>
+ count: {{count}}
+ </file>
+ </example>
  */
 
 
@@ -208,14 +208,14 @@ forEach(
  * mouseleave. ({@link guide/expression#-event- Event object is available as `$event`})
  *
  * @example
-   <example>
-     <file name="index.html">
-      <button ng-mouseleave="count = count + 1" ng-init="count=0">
-        Increment (when mouse leaves)
-      </button>
-      count: {{count}}
-     </file>
-   </example>
+ <example>
+ <file name="index.html">
+ <button ng-mouseleave="count = count + 1" ng-init="count=0">
+ Increment (when mouse leaves)
+ </button>
+ count: {{count}}
+ </file>
+ </example>
  */
 
 
@@ -232,14 +232,14 @@ forEach(
  * mousemove. ({@link guide/expression#-event- Event object is available as `$event`})
  *
  * @example
-   <example>
-     <file name="index.html">
-      <button ng-mousemove="count = count + 1" ng-init="count=0">
-        Increment (when mouse moves)
-      </button>
-      count: {{count}}
-     </file>
-   </example>
+ <example>
+ <file name="index.html">
+ <button ng-mousemove="count = count + 1" ng-init="count=0">
+ Increment (when mouse moves)
+ </button>
+ count: {{count}}
+ </file>
+ </example>
  */
 
 
@@ -256,12 +256,12 @@ forEach(
  * keydown. (Event object is available as `$event` and can be interrogated for keyCode, altKey, etc.)
  *
  * @example
-   <example>
-     <file name="index.html">
-      <input ng-keydown="count = count + 1" ng-init="count=0">
-      key down count: {{count}}
-     </file>
-   </example>
+ <example>
+ <file name="index.html">
+ <input ng-keydown="count = count + 1" ng-init="count=0">
+ key down count: {{count}}
+ </file>
+ </example>
  */
 
 
@@ -278,17 +278,17 @@ forEach(
  * keyup. (Event object is available as `$event` and can be interrogated for keyCode, altKey, etc.)
  *
  * @example
-   <example>
-     <file name="index.html">
-       <p>Typing in the input box below updates the key count</p>
-       <input ng-keyup="count = count + 1" ng-init="count=0"> key up count: {{count}}
+ <example>
+ <file name="index.html">
+ <p>Typing in the input box below updates the key count</p>
+ <input ng-keyup="count = count + 1" ng-init="count=0"> key up count: {{count}}
 
-       <p>Typing in the input box below updates the keycode</p>
-       <input ng-keyup="event=$event">
-       <p>event keyCode: {{ event.keyCode }}</p>
-       <p>event altKey: {{ event.altKey }}</p>
-     </file>
-   </example>
+ <p>Typing in the input box below updates the keycode</p>
+ <input ng-keyup="event=$event">
+ <p>event keyCode: {{ event.keyCode }}</p>
+ <p>event altKey: {{ event.altKey }}</p>
+ </file>
+ </example>
  */
 
 
@@ -305,12 +305,12 @@ forEach(
  * and can be interrogated for keyCode, altKey, etc.)
  *
  * @example
-   <example>
-     <file name="index.html">
-      <input ng-keypress="count = count + 1" ng-init="count=0">
-      key press count: {{count}}
-     </file>
-   </example>
+ <example>
+ <file name="index.html">
+ <input ng-keypress="count = count + 1" ng-init="count=0">
+ key press count: {{count}}
+ </file>
+ </example>
  */
 
 
@@ -338,11 +338,11 @@ forEach(
  * ({@link guide/expression#-event- Event object is available as `$event`})
  *
  * @example
-   <example module="submitExample">
-     <file name="index.html">
-      <script>
-        angular.module('submitExample', [])
-          .controller('ExampleController', ['$scope', function($scope) {
+ <example module="submitExample">
+ <file name="index.html">
+ <script>
+ angular.module('submitExample', [])
+ .controller('ExampleController', ['$scope', function($scope) {
             $scope.list = [];
             $scope.text = 'hello';
             $scope.submit = function() {
@@ -352,29 +352,29 @@ forEach(
               }
             };
           }]);
-      </script>
-      <form ng-submit="submit()" ng-controller="ExampleController">
-        Enter text and hit enter:
-        <input type="text" ng-model="text" name="text" />
-        <input type="submit" id="submit" value="Submit" />
-        <pre>list={{list}}</pre>
-      </form>
-     </file>
-     <file name="protractor.js" type="protractor">
-       it('should check ng-submit', function() {
+ </script>
+ <form ng-submit="submit()" ng-controller="ExampleController">
+ Enter text and hit enter:
+ <input type="text" ng-model="text" name="text" />
+ <input type="submit" id="submit" value="Submit" />
+ <pre>list={{list}}</pre>
+ </form>
+ </file>
+ <file name="protractor.js" type="protractor">
+ it('should check ng-submit', function() {
          expect(element(by.binding('list')).getText()).toBe('list=[]');
          element(by.css('#submit')).click();
          expect(element(by.binding('list')).getText()).toContain('hello');
          expect(element(by.model('text')).getAttribute('value')).toBe('');
        });
-       it('should ignore empty strings', function() {
+ it('should ignore empty strings', function() {
          expect(element(by.binding('list')).getText()).toBe('list=[]');
          element(by.css('#submit')).click();
          element(by.css('#submit')).click();
          expect(element(by.binding('list')).getText()).toContain('hello');
         });
-     </file>
-   </example>
+ </file>
+ </example>
  */
 
 /**
@@ -434,12 +434,12 @@ forEach(
  * copy. ({@link guide/expression#-event- Event object is available as `$event`})
  *
  * @example
-   <example>
-     <file name="index.html">
-      <input ng-copy="copied=true" ng-init="copied=false; value='copy me'" ng-model="value">
-      copied: {{copied}}
-     </file>
-   </example>
+ <example>
+ <file name="index.html">
+ <input ng-copy="copied=true" ng-init="copied=false; value='copy me'" ng-model="value">
+ copied: {{copied}}
+ </file>
+ </example>
  */
 
 /**
@@ -455,12 +455,12 @@ forEach(
  * cut. ({@link guide/expression#-event- Event object is available as `$event`})
  *
  * @example
-   <example>
-     <file name="index.html">
-      <input ng-cut="cut=true" ng-init="cut=false; value='cut me'" ng-model="value">
-      cut: {{cut}}
-     </file>
-   </example>
+ <example>
+ <file name="index.html">
+ <input ng-cut="cut=true" ng-init="cut=false; value='cut me'" ng-model="value">
+ cut: {{cut}}
+ </file>
+ </example>
  */
 
 /**
@@ -476,10 +476,10 @@ forEach(
  * paste. ({@link guide/expression#-event- Event object is available as `$event`})
  *
  * @example
-   <example>
-     <file name="index.html">
-      <input ng-paste="paste=true" ng-init="paste=false" placeholder='paste here'>
-      pasted: {{paste}}
-     </file>
-   </example>
+ <example>
+ <file name="index.html">
+ <input ng-paste="paste=true" ng-init="paste=false" placeholder='paste here'>
+ pasted: {{paste}}
+ </file>
+ </example>
  */

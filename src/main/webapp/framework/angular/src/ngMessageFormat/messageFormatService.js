@@ -70,41 +70,40 @@
  * </file>
  * </example>
  */
-var $$MessageFormatFactory = ['$parse', '$locale', '$sce', '$exceptionHandler', function $$messageFormat(
-                   $parse,   $locale,   $sce,   $exceptionHandler) {
+var $$MessageFormatFactory = ['$parse', '$locale', '$sce', '$exceptionHandler', function $$messageFormat($parse, $locale, $sce, $exceptionHandler) {
 
-  function getStringifier(trustedContext, allOrNothing, text) {
-    return function stringifier(value) {
-      try {
-        value = trustedContext ? $sce['getTrusted'](trustedContext, value) : $sce['valueOf'](value);
-        return allOrNothing && (value === void 0) ? value : stringify(value);
-      } catch (err) {
-        $exceptionHandler($interpolateMinErr['interr'](text, err));
-      }
+    function getStringifier(trustedContext, allOrNothing, text) {
+        return function stringifier(value) {
+            try {
+                value = trustedContext ? $sce['getTrusted'](trustedContext, value) : $sce['valueOf'](value);
+                return allOrNothing && (value === void 0) ? value : stringify(value);
+            } catch (err) {
+                $exceptionHandler($interpolateMinErr['interr'](text, err));
+            }
+        };
+    }
+
+    function interpolate(text, mustHaveExpression, trustedContext, allOrNothing) {
+        var stringifier = getStringifier(trustedContext, allOrNothing, text);
+        var parser = new MessageFormatParser(text, 0, $parse, $locale['pluralCat'], stringifier,
+            mustHaveExpression, trustedContext, allOrNothing);
+        parser.run(parser.ruleInterpolate);
+        return parser.parsedFn;
+    }
+
+    return {
+        'interpolate': interpolate
     };
-  }
-
-  function interpolate(text, mustHaveExpression, trustedContext, allOrNothing) {
-    var stringifier = getStringifier(trustedContext, allOrNothing, text);
-    var parser = new MessageFormatParser(text, 0, $parse, $locale['pluralCat'], stringifier,
-                                         mustHaveExpression, trustedContext, allOrNothing);
-    parser.run(parser.ruleInterpolate);
-    return parser.parsedFn;
-  }
-
-  return {
-    'interpolate': interpolate
-  };
 }];
 
 var $$interpolateDecorator = ['$$messageFormat', '$delegate', function $$interpolateDecorator($$messageFormat, $interpolate) {
-  if ($interpolate['startSymbol']() != "{{" || $interpolate['endSymbol']() != "}}") {
-    throw $interpolateMinErr('nochgmustache', 'angular-message-format.js currently does not allow you to use custom start and end symbols for interpolation.');
-  }
-  var interpolate = $$messageFormat['interpolate'];
-  interpolate['startSymbol'] = $interpolate['startSymbol'];
-  interpolate['endSymbol'] = $interpolate['endSymbol'];
-  return interpolate;
+    if ($interpolate['startSymbol']() != "{{" || $interpolate['endSymbol']() != "}}") {
+        throw $interpolateMinErr('nochgmustache', 'angular-message-format.js currently does not allow you to use custom start and end symbols for interpolation.');
+    }
+    var interpolate = $$messageFormat['interpolate'];
+    interpolate['startSymbol'] = $interpolate['startSymbol'];
+    interpolate['endSymbol'] = $interpolate['endSymbol'];
+    return interpolate;
 }];
 
 
@@ -116,6 +115,6 @@ var $$interpolateDecorator = ['$$messageFormat', '$delegate', function $$interpo
  */
 var module = window['angular']['module']('ngMessageFormat', ['ng']);
 module['factory']('$$messageFormat', $$MessageFormatFactory);
-module['config'](['$provide', function($provide) {
-  $provide['decorator']('$interpolate', $$interpolateDecorator);
+module['config'](['$provide', function ($provide) {
+    $provide['decorator']('$interpolate', $$interpolateDecorator);
 }]);

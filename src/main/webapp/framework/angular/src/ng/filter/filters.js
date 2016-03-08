@@ -20,28 +20,28 @@ var ZERO_CHAR = '0';
  *
  *
  * @example
-   <example module="currencyExample">
-     <file name="index.html">
-       <script>
-         angular.module('currencyExample', [])
-           .controller('ExampleController', ['$scope', function($scope) {
+ <example module="currencyExample">
+ <file name="index.html">
+ <script>
+ angular.module('currencyExample', [])
+ .controller('ExampleController', ['$scope', function($scope) {
              $scope.amount = 1234.56;
            }]);
-       </script>
-       <div ng-controller="ExampleController">
-         <input type="number" ng-model="amount" aria-label="amount"> <br>
-         default currency symbol ($): <span id="currency-default">{{amount | currency}}</span><br>
-         custom currency identifier (USD$): <span id="currency-custom">{{amount | currency:"USD$"}}</span>
-         no fractions (0): <span id="currency-no-fractions">{{amount | currency:"USD$":0}}</span>
-       </div>
-     </file>
-     <file name="protractor.js" type="protractor">
-       it('should init with 1234.56', function() {
+ </script>
+ <div ng-controller="ExampleController">
+ <input type="number" ng-model="amount" aria-label="amount"> <br>
+ default currency symbol ($): <span id="currency-default">{{amount | currency}}</span><br>
+ custom currency identifier (USD$): <span id="currency-custom">{{amount | currency:"USD$"}}</span>
+ no fractions (0): <span id="currency-no-fractions">{{amount | currency:"USD$":0}}</span>
+ </div>
+ </file>
+ <file name="protractor.js" type="protractor">
+ it('should init with 1234.56', function() {
          expect(element(by.id('currency-default')).getText()).toBe('$1,234.56');
          expect(element(by.id('currency-custom')).getText()).toBe('USD$1,234.56');
          expect(element(by.id('currency-no-fractions')).getText()).toBe('USD$1,235');
        });
-       it('should update', function() {
+ it('should update', function() {
          if (browser.params.browser == 'safari') {
            // Safari does not understand the minus key. See
            // https://github.com/angular/protractor/issues/481
@@ -53,27 +53,26 @@ var ZERO_CHAR = '0';
          expect(element(by.id('currency-custom')).getText()).toBe('-USD$1,234.00');
          expect(element(by.id('currency-no-fractions')).getText()).toBe('-USD$1,234');
        });
-     </file>
-   </example>
+ </file>
+ </example>
  */
 currencyFilter.$inject = ['$locale'];
 function currencyFilter($locale) {
-  var formats = $locale.NUMBER_FORMATS;
-  return function(amount, currencySymbol, fractionSize) {
-    if (isUndefined(currencySymbol)) {
-      currencySymbol = formats.CURRENCY_SYM;
-    }
+    var formats = $locale.NUMBER_FORMATS;
+    return function (amount, currencySymbol, fractionSize) {
+        if (isUndefined(currencySymbol)) {
+            currencySymbol = formats.CURRENCY_SYM;
+        }
 
-    if (isUndefined(fractionSize)) {
-      fractionSize = formats.PATTERNS[1].maxFrac;
-    }
+        if (isUndefined(fractionSize)) {
+            fractionSize = formats.PATTERNS[1].maxFrac;
+        }
 
-    // if null or undefined pass it through
-    return (amount == null)
-        ? amount
-        : formatNumber(amount, formats.PATTERNS[1], formats.GROUP_SEP, formats.DECIMAL_SEP, fractionSize).
-            replace(/\u00A4/g, currencySymbol);
-  };
+        // if null or undefined pass it through
+        return (amount == null)
+            ? amount
+            : formatNumber(amount, formats.PATTERNS[1], formats.GROUP_SEP, formats.DECIMAL_SEP, fractionSize).replace(/\u00A4/g, currencySymbol);
+    };
 }
 
 /**
@@ -96,49 +95,49 @@ function currencyFilter($locale) {
  * @returns {string} Number rounded to fractionSize and places a “,” after each third digit.
  *
  * @example
-   <example module="numberFilterExample">
-     <file name="index.html">
-       <script>
-         angular.module('numberFilterExample', [])
-           .controller('ExampleController', ['$scope', function($scope) {
+ <example module="numberFilterExample">
+ <file name="index.html">
+ <script>
+ angular.module('numberFilterExample', [])
+ .controller('ExampleController', ['$scope', function($scope) {
              $scope.val = 1234.56789;
            }]);
-       </script>
-       <div ng-controller="ExampleController">
-         <label>Enter number: <input ng-model='val'></label><br>
-         Default formatting: <span id='number-default'>{{val | number}}</span><br>
-         No fractions: <span>{{val | number:0}}</span><br>
-         Negative number: <span>{{-val | number:4}}</span>
-       </div>
-     </file>
-     <file name="protractor.js" type="protractor">
-       it('should format numbers', function() {
+ </script>
+ <div ng-controller="ExampleController">
+ <label>Enter number: <input ng-model='val'></label><br>
+ Default formatting: <span id='number-default'>{{val | number}}</span><br>
+ No fractions: <span>{{val | number:0}}</span><br>
+ Negative number: <span>{{-val | number:4}}</span>
+ </div>
+ </file>
+ <file name="protractor.js" type="protractor">
+ it('should format numbers', function() {
          expect(element(by.id('number-default')).getText()).toBe('1,234.568');
          expect(element(by.binding('val | number:0')).getText()).toBe('1,235');
          expect(element(by.binding('-val | number:4')).getText()).toBe('-1,234.5679');
        });
 
-       it('should update', function() {
+ it('should update', function() {
          element(by.model('val')).clear();
          element(by.model('val')).sendKeys('3374.333');
          expect(element(by.id('number-default')).getText()).toBe('3,374.333');
          expect(element(by.binding('val | number:0')).getText()).toBe('3,374');
          expect(element(by.binding('-val | number:4')).getText()).toBe('-3,374.3330');
       });
-     </file>
-   </example>
+ </file>
+ </example>
  */
 numberFilter.$inject = ['$locale'];
 function numberFilter($locale) {
-  var formats = $locale.NUMBER_FORMATS;
-  return function(number, fractionSize) {
+    var formats = $locale.NUMBER_FORMATS;
+    return function (number, fractionSize) {
 
-    // if null or undefined pass it through
-    return (number == null)
-        ? number
-        : formatNumber(number, formats.PATTERNS[0], formats.GROUP_SEP, formats.DECIMAL_SEP,
-                       fractionSize);
-  };
+        // if null or undefined pass it through
+        return (number == null)
+            ? number
+            : formatNumber(number, formats.PATTERNS[0], formats.GROUP_SEP, formats.DECIMAL_SEP,
+            fractionSize);
+    };
 }
 
 /**
@@ -155,54 +154,55 @@ function numberFilter($locale) {
  *
  */
 function parse(numStr) {
-  var exponent = 0, digits, numberOfIntegerDigits;
-  var i, j, zeros;
+    var exponent = 0, digits, numberOfIntegerDigits;
+    var i, j, zeros;
 
-  // Decimal point?
-  if ((numberOfIntegerDigits = numStr.indexOf(DECIMAL_SEP)) > -1) {
-    numStr = numStr.replace(DECIMAL_SEP, '');
-  }
-
-  // Exponential form?
-  if ((i = numStr.search(/e/i)) > 0) {
-    // Work out the exponent.
-    if (numberOfIntegerDigits < 0) numberOfIntegerDigits = i;
-    numberOfIntegerDigits += +numStr.slice(i + 1);
-    numStr = numStr.substring(0, i);
-  } else if (numberOfIntegerDigits < 0) {
-    // There was no decimal point or exponent so it is an integer.
-    numberOfIntegerDigits = numStr.length;
-  }
-
-  // Count the number of leading zeros.
-  for (i = 0; numStr.charAt(i) == ZERO_CHAR; i++) {/* jshint noempty: false */}
-
-  if (i == (zeros = numStr.length)) {
-    // The digits are all zero.
-    digits = [0];
-    numberOfIntegerDigits = 1;
-  } else {
-    // Count the number of trailing zeros
-    zeros--;
-    while (numStr.charAt(zeros) == ZERO_CHAR) zeros--;
-
-    // Trailing zeros are insignificant so ignore them
-    numberOfIntegerDigits -= i;
-    digits = [];
-    // Convert string to array of digits without leading/trailing zeros.
-    for (j = 0; i <= zeros; i++, j++) {
-      digits[j] = +numStr.charAt(i);
+    // Decimal point?
+    if ((numberOfIntegerDigits = numStr.indexOf(DECIMAL_SEP)) > -1) {
+        numStr = numStr.replace(DECIMAL_SEP, '');
     }
-  }
 
-  // If the number overflows the maximum allowed digits then use an exponent.
-  if (numberOfIntegerDigits > MAX_DIGITS) {
-    digits = digits.splice(0, MAX_DIGITS - 1);
-    exponent = numberOfIntegerDigits - 1;
-    numberOfIntegerDigits = 1;
-  }
+    // Exponential form?
+    if ((i = numStr.search(/e/i)) > 0) {
+        // Work out the exponent.
+        if (numberOfIntegerDigits < 0) numberOfIntegerDigits = i;
+        numberOfIntegerDigits += +numStr.slice(i + 1);
+        numStr = numStr.substring(0, i);
+    } else if (numberOfIntegerDigits < 0) {
+        // There was no decimal point or exponent so it is an integer.
+        numberOfIntegerDigits = numStr.length;
+    }
 
-  return { d: digits, e: exponent, i: numberOfIntegerDigits };
+    // Count the number of leading zeros.
+    for (i = 0; numStr.charAt(i) == ZERO_CHAR; i++) {/* jshint noempty: false */
+    }
+
+    if (i == (zeros = numStr.length)) {
+        // The digits are all zero.
+        digits = [0];
+        numberOfIntegerDigits = 1;
+    } else {
+        // Count the number of trailing zeros
+        zeros--;
+        while (numStr.charAt(zeros) == ZERO_CHAR) zeros--;
+
+        // Trailing zeros are insignificant so ignore them
+        numberOfIntegerDigits -= i;
+        digits = [];
+        // Convert string to array of digits without leading/trailing zeros.
+        for (j = 0; i <= zeros; i++, j++) {
+            digits[j] = +numStr.charAt(i);
+        }
+    }
+
+    // If the number overflows the maximum allowed digits then use an exponent.
+    if (numberOfIntegerDigits > MAX_DIGITS) {
+        digits = digits.splice(0, MAX_DIGITS - 1);
+        exponent = numberOfIntegerDigits - 1;
+        numberOfIntegerDigits = 1;
+    }
+
+    return {d: digits, e: exponent, i: numberOfIntegerDigits};
 }
 
 /**
@@ -221,33 +221,33 @@ function roundNumber(parsedNumber, fractionSize, minFrac, maxFrac) {
     var digit = digits[roundAt];
 
     if (roundAt > 0) {
-      // Drop fractional digits beyond `roundAt`
-      digits.splice(Math.max(parsedNumber.i, roundAt));
+        // Drop fractional digits beyond `roundAt`
+        digits.splice(Math.max(parsedNumber.i, roundAt));
 
-      // Set non-fractional digits beyond `roundAt` to 0
-      for (var j = roundAt; j < digits.length; j++) {
-        digits[j] = 0;
-      }
+        // Set non-fractional digits beyond `roundAt` to 0
+        for (var j = roundAt; j < digits.length; j++) {
+            digits[j] = 0;
+        }
     } else {
-      // We rounded to zero so reset the parsedNumber
-      fractionLen = Math.max(0, fractionLen);
-      parsedNumber.i = 1;
-      digits.length = Math.max(1, roundAt = fractionSize + 1);
-      digits[0] = 0;
-      for (var i = 1; i < roundAt; i++) digits[i] = 0;
+        // We rounded to zero so reset the parsedNumber
+        fractionLen = Math.max(0, fractionLen);
+        parsedNumber.i = 1;
+        digits.length = Math.max(1, roundAt = fractionSize + 1);
+        digits[0] = 0;
+        for (var i = 1; i < roundAt; i++) digits[i] = 0;
     }
 
     if (digit >= 5) {
-      if (roundAt - 1 < 0) {
-        for (var k = 0; k > roundAt; k--) {
-          digits.unshift(0);
-          parsedNumber.i++;
+        if (roundAt - 1 < 0) {
+            for (var k = 0; k > roundAt; k--) {
+                digits.unshift(0);
+                parsedNumber.i++;
+            }
+            digits.unshift(1);
+            parsedNumber.i++;
+        } else {
+            digits[roundAt - 1]++;
         }
-        digits.unshift(1);
-        parsedNumber.i++;
-      } else {
-        digits[roundAt - 1]++;
-      }
     }
 
     // Pad out with zeros to get the required fraction length
@@ -255,14 +255,14 @@ function roundNumber(parsedNumber, fractionSize, minFrac, maxFrac) {
 
 
     // Do any carrying, e.g. a digit was rounded up to 10
-    var carry = digits.reduceRight(function(carry, d, i, digits) {
-      d = d + carry;
-      digits[i] = d % 10;
-      return Math.floor(d / 10);
+    var carry = digits.reduceRight(function (carry, d, i, digits) {
+        d = d + carry;
+        digits[i] = d % 10;
+        return Math.floor(d / 10);
     }, 0);
     if (carry) {
-      digits.unshift(carry);
-      parsedNumber.i++;
+        digits.unshift(carry);
+        parsedNumber.i++;
     }
 }
 
@@ -286,119 +286,121 @@ function roundNumber(parsedNumber, fractionSize, minFrac, maxFrac) {
  */
 function formatNumber(number, pattern, groupSep, decimalSep, fractionSize) {
 
-  if (!(isString(number) || isNumber(number)) || isNaN(number)) return '';
+    if (!(isString(number) || isNumber(number)) || isNaN(number)) return '';
 
-  var isInfinity = !isFinite(number);
-  var isZero = false;
-  var numStr = Math.abs(number) + '',
-      formattedText = '',
-      parsedNumber;
+    var isInfinity = !isFinite(number);
+    var isZero = false;
+    var numStr = Math.abs(number) + '',
+        formattedText = '',
+        parsedNumber;
 
-  if (isInfinity) {
-    formattedText = '\u221e';
-  } else {
-    parsedNumber = parse(numStr);
-
-    roundNumber(parsedNumber, fractionSize, pattern.minFrac, pattern.maxFrac);
-
-    var digits = parsedNumber.d;
-    var integerLen = parsedNumber.i;
-    var exponent = parsedNumber.e;
-    var decimals = [];
-    isZero = digits.reduce(function(isZero, d) { return isZero && !d; }, true);
-
-    // pad zeros for small numbers
-    while (integerLen < 0) {
-      digits.unshift(0);
-      integerLen++;
-    }
-
-    // extract decimals digits
-    if (integerLen > 0) {
-      decimals = digits.splice(integerLen);
+    if (isInfinity) {
+        formattedText = '\u221e';
     } else {
-      decimals = digits;
-      digits = [0];
-    }
+        parsedNumber = parse(numStr);
 
-    // format the integer digits with grouping separators
-    var groups = [];
-    if (digits.length > pattern.lgSize) {
-      groups.unshift(digits.splice(-pattern.lgSize).join(''));
-    }
-    while (digits.length > pattern.gSize) {
-      groups.unshift(digits.splice(-pattern.gSize).join(''));
-    }
-    if (digits.length) {
-      groups.unshift(digits.join(''));
-    }
-    formattedText = groups.join(groupSep);
+        roundNumber(parsedNumber, fractionSize, pattern.minFrac, pattern.maxFrac);
 
-    // append the decimal digits
-    if (decimals.length) {
-      formattedText += decimalSep + decimals.join('');
-    }
+        var digits = parsedNumber.d;
+        var integerLen = parsedNumber.i;
+        var exponent = parsedNumber.e;
+        var decimals = [];
+        isZero = digits.reduce(function (isZero, d) {
+            return isZero && !d;
+        }, true);
 
-    if (exponent) {
-      formattedText += 'e+' + exponent;
+        // pad zeros for small numbers
+        while (integerLen < 0) {
+            digits.unshift(0);
+            integerLen++;
+        }
+
+        // extract decimals digits
+        if (integerLen > 0) {
+            decimals = digits.splice(integerLen);
+        } else {
+            decimals = digits;
+            digits = [0];
+        }
+
+        // format the integer digits with grouping separators
+        var groups = [];
+        if (digits.length > pattern.lgSize) {
+            groups.unshift(digits.splice(-pattern.lgSize).join(''));
+        }
+        while (digits.length > pattern.gSize) {
+            groups.unshift(digits.splice(-pattern.gSize).join(''));
+        }
+        if (digits.length) {
+            groups.unshift(digits.join(''));
+        }
+        formattedText = groups.join(groupSep);
+
+        // append the decimal digits
+        if (decimals.length) {
+            formattedText += decimalSep + decimals.join('');
+        }
+
+        if (exponent) {
+            formattedText += 'e+' + exponent;
+        }
     }
-  }
-  if (number < 0 && !isZero) {
-    return pattern.negPre + formattedText + pattern.negSuf;
-  } else {
-    return pattern.posPre + formattedText + pattern.posSuf;
-  }
+    if (number < 0 && !isZero) {
+        return pattern.negPre + formattedText + pattern.negSuf;
+    } else {
+        return pattern.posPre + formattedText + pattern.posSuf;
+    }
 }
 
 function padNumber(num, digits, trim, negWrap) {
-  var neg = '';
-  if (num < 0 || (negWrap && num <= 0)) {
-    if (negWrap) {
-      num = -num + 1;
-    } else {
-      num = -num;
-      neg = '-';
+    var neg = '';
+    if (num < 0 || (negWrap && num <= 0)) {
+        if (negWrap) {
+            num = -num + 1;
+        } else {
+            num = -num;
+            neg = '-';
+        }
     }
-  }
-  num = '' + num;
-  while (num.length < digits) num = ZERO_CHAR + num;
-  if (trim) {
-    num = num.substr(num.length - digits);
-  }
-  return neg + num;
+    num = '' + num;
+    while (num.length < digits) num = ZERO_CHAR + num;
+    if (trim) {
+        num = num.substr(num.length - digits);
+    }
+    return neg + num;
 }
 
 
 function dateGetter(name, size, offset, trim, negWrap) {
-  offset = offset || 0;
-  return function(date) {
-    var value = date['get' + name]();
-    if (offset > 0 || value > -offset) {
-      value += offset;
-    }
-    if (value === 0 && offset == -12) value = 12;
-    return padNumber(value, size, trim, negWrap);
-  };
+    offset = offset || 0;
+    return function (date) {
+        var value = date['get' + name]();
+        if (offset > 0 || value > -offset) {
+            value += offset;
+        }
+        if (value === 0 && offset == -12) value = 12;
+        return padNumber(value, size, trim, negWrap);
+    };
 }
 
 function dateStrGetter(name, shortForm, standAlone) {
-  return function(date, formats) {
-    var value = date['get' + name]();
-    var propPrefix = (standAlone ? 'STANDALONE' : '') + (shortForm ? 'SHORT' : '');
-    var get = uppercase(propPrefix + name);
+    return function (date, formats) {
+        var value = date['get' + name]();
+        var propPrefix = (standAlone ? 'STANDALONE' : '') + (shortForm ? 'SHORT' : '');
+        var get = uppercase(propPrefix + name);
 
-    return formats[get][value];
-  };
+        return formats[get][value];
+    };
 }
 
 function timeZoneGetter(date, formats, offset) {
-  var zone = -1 * offset;
-  var paddedZone = (zone >= 0) ? "+" : "";
+    var zone = -1 * offset;
+    var paddedZone = (zone >= 0) ? "+" : "";
 
-  paddedZone += padNumber(Math[zone > 0 ? 'floor' : 'ceil'](zone / 60), 2) +
-                padNumber(Math.abs(zone % 60), 2);
+    paddedZone += padNumber(Math[zone > 0 ? 'floor' : 'ceil'](zone / 60), 2) +
+        padNumber(Math.abs(zone % 60), 2);
 
-  return paddedZone;
+    return paddedZone;
 }
 
 function getFirstThursdayOfYear(year) {
@@ -411,66 +413,66 @@ function getFirstThursdayOfYear(year) {
 
 function getThursdayThisWeek(datetime) {
     return new Date(datetime.getFullYear(), datetime.getMonth(),
-      // 4 = index of Thursday
-      datetime.getDate() + (4 - datetime.getDay()));
+        // 4 = index of Thursday
+        datetime.getDate() + (4 - datetime.getDay()));
 }
 
 function weekGetter(size) {
-   return function(date) {
-      var firstThurs = getFirstThursdayOfYear(date.getFullYear()),
-         thisThurs = getThursdayThisWeek(date);
+    return function (date) {
+        var firstThurs = getFirstThursdayOfYear(date.getFullYear()),
+            thisThurs = getThursdayThisWeek(date);
 
-      var diff = +thisThurs - +firstThurs,
-         result = 1 + Math.round(diff / 6.048e8); // 6.048e8 ms per week
+        var diff = +thisThurs - +firstThurs,
+            result = 1 + Math.round(diff / 6.048e8); // 6.048e8 ms per week
 
-      return padNumber(result, size);
-   };
+        return padNumber(result, size);
+    };
 }
 
 function ampmGetter(date, formats) {
-  return date.getHours() < 12 ? formats.AMPMS[0] : formats.AMPMS[1];
+    return date.getHours() < 12 ? formats.AMPMS[0] : formats.AMPMS[1];
 }
 
 function eraGetter(date, formats) {
-  return date.getFullYear() <= 0 ? formats.ERAS[0] : formats.ERAS[1];
+    return date.getFullYear() <= 0 ? formats.ERAS[0] : formats.ERAS[1];
 }
 
 function longEraGetter(date, formats) {
-  return date.getFullYear() <= 0 ? formats.ERANAMES[0] : formats.ERANAMES[1];
+    return date.getFullYear() <= 0 ? formats.ERANAMES[0] : formats.ERANAMES[1];
 }
 
 var DATE_FORMATS = {
-  yyyy: dateGetter('FullYear', 4, 0, false, true),
+    yyyy: dateGetter('FullYear', 4, 0, false, true),
     yy: dateGetter('FullYear', 2, 0, true, true),
-     y: dateGetter('FullYear', 1, 0, false, true),
-  MMMM: dateStrGetter('Month'),
-   MMM: dateStrGetter('Month', true),
+    y: dateGetter('FullYear', 1, 0, false, true),
+    MMMM: dateStrGetter('Month'),
+    MMM: dateStrGetter('Month', true),
     MM: dateGetter('Month', 2, 1),
-     M: dateGetter('Month', 1, 1),
-  LLLL: dateStrGetter('Month', false, true),
+    M: dateGetter('Month', 1, 1),
+    LLLL: dateStrGetter('Month', false, true),
     dd: dateGetter('Date', 2),
-     d: dateGetter('Date', 1),
+    d: dateGetter('Date', 1),
     HH: dateGetter('Hours', 2),
-     H: dateGetter('Hours', 1),
+    H: dateGetter('Hours', 1),
     hh: dateGetter('Hours', 2, -12),
-     h: dateGetter('Hours', 1, -12),
+    h: dateGetter('Hours', 1, -12),
     mm: dateGetter('Minutes', 2),
-     m: dateGetter('Minutes', 1),
+    m: dateGetter('Minutes', 1),
     ss: dateGetter('Seconds', 2),
-     s: dateGetter('Seconds', 1),
-     // while ISO 8601 requires fractions to be prefixed with `.` or `,`
-     // we can be just safely rely on using `sss` since we currently don't support single or two digit fractions
-   sss: dateGetter('Milliseconds', 3),
-  EEEE: dateStrGetter('Day'),
-   EEE: dateStrGetter('Day', true),
-     a: ampmGetter,
-     Z: timeZoneGetter,
+    s: dateGetter('Seconds', 1),
+    // while ISO 8601 requires fractions to be prefixed with `.` or `,`
+    // we can be just safely rely on using `sss` since we currently don't support single or two digit fractions
+    sss: dateGetter('Milliseconds', 3),
+    EEEE: dateStrGetter('Day'),
+    EEE: dateStrGetter('Day', true),
+    a: ampmGetter,
+    Z: timeZoneGetter,
     ww: weekGetter(2),
-     w: weekGetter(1),
-     G: eraGetter,
-     GG: eraGetter,
-     GGG: eraGetter,
-     GGGG: longEraGetter
+    w: weekGetter(1),
+    G: eraGetter,
+    GG: eraGetter,
+    GGG: eraGetter,
+    GGGG: longEraGetter
 };
 
 var DATE_FORMATS_SPLIT = /((?:[^yMLdHhmsaZEwG']+)|(?:'(?:[^']|'')*')|(?:E+|y+|M+|L+|d+|H+|h+|m+|s+|a|Z|G+|w+))(.*)/,
@@ -545,19 +547,19 @@ var DATE_FORMATS_SPLIT = /((?:[^yMLdHhmsaZEwG']+)|(?:'(?:[^']|'')*')|(?:E+|y+|M+
  * @returns {string} Formatted string or the input if input is not recognized as date/millis.
  *
  * @example
-   <example>
-     <file name="index.html">
-       <span ng-non-bindable>{{1288323623006 | date:'medium'}}</span>:
-           <span>{{1288323623006 | date:'medium'}}</span><br>
-       <span ng-non-bindable>{{1288323623006 | date:'yyyy-MM-dd HH:mm:ss Z'}}</span>:
-          <span>{{1288323623006 | date:'yyyy-MM-dd HH:mm:ss Z'}}</span><br>
-       <span ng-non-bindable>{{1288323623006 | date:'MM/dd/yyyy @ h:mma'}}</span>:
-          <span>{{'1288323623006' | date:'MM/dd/yyyy @ h:mma'}}</span><br>
-       <span ng-non-bindable>{{1288323623006 | date:"MM/dd/yyyy 'at' h:mma"}}</span>:
-          <span>{{'1288323623006' | date:"MM/dd/yyyy 'at' h:mma"}}</span><br>
-     </file>
-     <file name="protractor.js" type="protractor">
-       it('should format date', function() {
+ <example>
+ <file name="index.html">
+ <span ng-non-bindable>{{1288323623006 | date:'medium'}}</span>:
+ <span>{{1288323623006 | date:'medium'}}</span><br>
+ <span ng-non-bindable>{{1288323623006 | date:'yyyy-MM-dd HH:mm:ss Z'}}</span>:
+ <span>{{1288323623006 | date:'yyyy-MM-dd HH:mm:ss Z'}}</span><br>
+ <span ng-non-bindable>{{1288323623006 | date:'MM/dd/yyyy @ h:mma'}}</span>:
+ <span>{{'1288323623006' | date:'MM/dd/yyyy @ h:mma'}}</span><br>
+ <span ng-non-bindable>{{1288323623006 | date:"MM/dd/yyyy 'at' h:mma"}}</span>:
+ <span>{{'1288323623006' | date:"MM/dd/yyyy 'at' h:mma"}}</span><br>
+ </file>
+ <file name="protractor.js" type="protractor">
+ it('should format date', function() {
          expect(element(by.binding("1288323623006 | date:'medium'")).getText()).
             toMatch(/Oct 2\d, 2010 \d{1,2}:\d{2}:\d{2} (AM|PM)/);
          expect(element(by.binding("1288323623006 | date:'yyyy-MM-dd HH:mm:ss Z'")).getText()).
@@ -567,83 +569,83 @@ var DATE_FORMATS_SPLIT = /((?:[^yMLdHhmsaZEwG']+)|(?:'(?:[^']|'')*')|(?:E+|y+|M+
          expect(element(by.binding("'1288323623006' | date:\"MM/dd/yyyy 'at' h:mma\"")).getText()).
             toMatch(/10\/2\d\/2010 at \d{1,2}:\d{2}(AM|PM)/);
        });
-     </file>
-   </example>
+ </file>
+ </example>
  */
 dateFilter.$inject = ['$locale'];
 function dateFilter($locale) {
 
 
-  var R_ISO8601_STR = /^(\d{4})-?(\d\d)-?(\d\d)(?:T(\d\d)(?::?(\d\d)(?::?(\d\d)(?:\.(\d+))?)?)?(Z|([+-])(\d\d):?(\d\d))?)?$/;
-                     // 1        2       3         4          5          6          7          8  9     10      11
-  function jsonStringToDate(string) {
-    var match;
-    if (match = string.match(R_ISO8601_STR)) {
-      var date = new Date(0),
-          tzHour = 0,
-          tzMin  = 0,
-          dateSetter = match[8] ? date.setUTCFullYear : date.setFullYear,
-          timeSetter = match[8] ? date.setUTCHours : date.setHours;
+    var R_ISO8601_STR = /^(\d{4})-?(\d\d)-?(\d\d)(?:T(\d\d)(?::?(\d\d)(?::?(\d\d)(?:\.(\d+))?)?)?(Z|([+-])(\d\d):?(\d\d))?)?$/;
+    // 1        2       3         4          5          6          7          8  9     10      11
+    function jsonStringToDate(string) {
+        var match;
+        if (match = string.match(R_ISO8601_STR)) {
+            var date = new Date(0),
+                tzHour = 0,
+                tzMin = 0,
+                dateSetter = match[8] ? date.setUTCFullYear : date.setFullYear,
+                timeSetter = match[8] ? date.setUTCHours : date.setHours;
 
-      if (match[9]) {
-        tzHour = toInt(match[9] + match[10]);
-        tzMin = toInt(match[9] + match[11]);
-      }
-      dateSetter.call(date, toInt(match[1]), toInt(match[2]) - 1, toInt(match[3]));
-      var h = toInt(match[4] || 0) - tzHour;
-      var m = toInt(match[5] || 0) - tzMin;
-      var s = toInt(match[6] || 0);
-      var ms = Math.round(parseFloat('0.' + (match[7] || 0)) * 1000);
-      timeSetter.call(date, h, m, s, ms);
-      return date;
-    }
-    return string;
-  }
-
-
-  return function(date, format, timezone) {
-    var text = '',
-        parts = [],
-        fn, match;
-
-    format = format || 'mediumDate';
-    format = $locale.DATETIME_FORMATS[format] || format;
-    if (isString(date)) {
-      date = NUMBER_STRING.test(date) ? toInt(date) : jsonStringToDate(date);
+            if (match[9]) {
+                tzHour = toInt(match[9] + match[10]);
+                tzMin = toInt(match[9] + match[11]);
+            }
+            dateSetter.call(date, toInt(match[1]), toInt(match[2]) - 1, toInt(match[3]));
+            var h = toInt(match[4] || 0) - tzHour;
+            var m = toInt(match[5] || 0) - tzMin;
+            var s = toInt(match[6] || 0);
+            var ms = Math.round(parseFloat('0.' + (match[7] || 0)) * 1000);
+            timeSetter.call(date, h, m, s, ms);
+            return date;
+        }
+        return string;
     }
 
-    if (isNumber(date)) {
-      date = new Date(date);
-    }
 
-    if (!isDate(date) || !isFinite(date.getTime())) {
-      return date;
-    }
+    return function (date, format, timezone) {
+        var text = '',
+            parts = [],
+            fn, match;
 
-    while (format) {
-      match = DATE_FORMATS_SPLIT.exec(format);
-      if (match) {
-        parts = concat(parts, match, 1);
-        format = parts.pop();
-      } else {
-        parts.push(format);
-        format = null;
-      }
-    }
+        format = format || 'mediumDate';
+        format = $locale.DATETIME_FORMATS[format] || format;
+        if (isString(date)) {
+            date = NUMBER_STRING.test(date) ? toInt(date) : jsonStringToDate(date);
+        }
 
-    var dateTimezoneOffset = date.getTimezoneOffset();
-    if (timezone) {
-      dateTimezoneOffset = timezoneToOffset(timezone, dateTimezoneOffset);
-      date = convertTimezoneToLocal(date, timezone, true);
-    }
-    forEach(parts, function(value) {
-      fn = DATE_FORMATS[value];
-      text += fn ? fn(date, $locale.DATETIME_FORMATS, dateTimezoneOffset)
-                 : value === "''" ? "'" : value.replace(/(^'|'$)/g, '').replace(/''/g, "'");
-    });
+        if (isNumber(date)) {
+            date = new Date(date);
+        }
 
-    return text;
-  };
+        if (!isDate(date) || !isFinite(date.getTime())) {
+            return date;
+        }
+
+        while (format) {
+            match = DATE_FORMATS_SPLIT.exec(format);
+            if (match) {
+                parts = concat(parts, match, 1);
+                format = parts.pop();
+            } else {
+                parts.push(format);
+                format = null;
+            }
+        }
+
+        var dateTimezoneOffset = date.getTimezoneOffset();
+        if (timezone) {
+            dateTimezoneOffset = timezoneToOffset(timezone, dateTimezoneOffset);
+            date = convertTimezoneToLocal(date, timezone, true);
+        }
+        forEach(parts, function (value) {
+            fn = DATE_FORMATS[value];
+            text += fn ? fn(date, $locale.DATETIME_FORMATS, dateTimezoneOffset)
+                : value === "''" ? "'" : value.replace(/(^'|'$)/g, '').replace(/''/g, "'");
+        });
+
+        return text;
+    };
 }
 
 
@@ -664,27 +666,27 @@ function dateFilter($locale) {
  *
  *
  * @example
-   <example>
-     <file name="index.html">
-       <pre id="default-spacing">{{ {'name':'value'} | json }}</pre>
-       <pre id="custom-spacing">{{ {'name':'value'} | json:4 }}</pre>
-     </file>
-     <file name="protractor.js" type="protractor">
-       it('should jsonify filtered objects', function() {
+ <example>
+ <file name="index.html">
+ <pre id="default-spacing">{{ {'name':'value'} | json }}</pre>
+ <pre id="custom-spacing">{{ {'name':'value'} | json:4 }}</pre>
+ </file>
+ <file name="protractor.js" type="protractor">
+ it('should jsonify filtered objects', function() {
          expect(element(by.id('default-spacing')).getText()).toMatch(/\{\n  "name": ?"value"\n}/);
          expect(element(by.id('custom-spacing')).getText()).toMatch(/\{\n    "name": ?"value"\n}/);
        });
-     </file>
-   </example>
+ </file>
+ </example>
  *
  */
 function jsonFilter() {
-  return function(object, spacing) {
-    if (isUndefined(spacing)) {
-        spacing = 2;
-    }
-    return toJson(object, spacing);
-  };
+    return function (object, spacing) {
+        if (isUndefined(spacing)) {
+            spacing = 2;
+        }
+        return toJson(object, spacing);
+    };
 }
 
 

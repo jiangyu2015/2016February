@@ -60,38 +60,38 @@
  *     unless they have a custom `toString` method (e.g. `Date` objects).
  *
  * @example
-   <example>
-     <file name="index.html">
-       <div ng-init="friends = [{name:'John', phone:'555-1276'},
-                                {name:'Mary', phone:'800-BIG-MARY'},
-                                {name:'Mike', phone:'555-4321'},
-                                {name:'Adam', phone:'555-5678'},
-                                {name:'Julie', phone:'555-8765'},
-                                {name:'Juliette', phone:'555-5678'}]"></div>
+ <example>
+ <file name="index.html">
+ <div ng-init="friends = [{name:'John', phone:'555-1276'},
+ {name:'Mary', phone:'800-BIG-MARY'},
+ {name:'Mike', phone:'555-4321'},
+ {name:'Adam', phone:'555-5678'},
+ {name:'Julie', phone:'555-8765'},
+ {name:'Juliette', phone:'555-5678'}]"></div>
 
-       <label>Search: <input ng-model="searchText"></label>
-       <table id="searchTextResults">
-         <tr><th>Name</th><th>Phone</th></tr>
-         <tr ng-repeat="friend in friends | filter:searchText">
-           <td>{{friend.name}}</td>
-           <td>{{friend.phone}}</td>
-         </tr>
-       </table>
-       <hr>
-       <label>Any: <input ng-model="search.$"></label> <br>
-       <label>Name only <input ng-model="search.name"></label><br>
-       <label>Phone only <input ng-model="search.phone"></label><br>
-       <label>Equality <input type="checkbox" ng-model="strict"></label><br>
-       <table id="searchObjResults">
-         <tr><th>Name</th><th>Phone</th></tr>
-         <tr ng-repeat="friendObj in friends | filter:search:strict">
-           <td>{{friendObj.name}}</td>
-           <td>{{friendObj.phone}}</td>
-         </tr>
-       </table>
-     </file>
-     <file name="protractor.js" type="protractor">
-       var expectFriendNames = function(expectedNames, key) {
+ <label>Search: <input ng-model="searchText"></label>
+ <table id="searchTextResults">
+ <tr><th>Name</th><th>Phone</th></tr>
+ <tr ng-repeat="friend in friends | filter:searchText">
+ <td>{{friend.name}}</td>
+ <td>{{friend.phone}}</td>
+ </tr>
+ </table>
+ <hr>
+ <label>Any: <input ng-model="search.$"></label> <br>
+ <label>Name only <input ng-model="search.name"></label><br>
+ <label>Phone only <input ng-model="search.phone"></label><br>
+ <label>Equality <input type="checkbox" ng-model="strict"></label><br>
+ <table id="searchObjResults">
+ <tr><th>Name</th><th>Phone</th></tr>
+ <tr ng-repeat="friendObj in friends | filter:search:strict">
+ <td>{{friendObj.name}}</td>
+ <td>{{friendObj.phone}}</td>
+ </tr>
+ </table>
+ </file>
+ <file name="protractor.js" type="protractor">
+ var expectFriendNames = function(expectedNames, key) {
          element.all(by.repeater(key + ' in friends').column(key + '.name')).then(function(arr) {
            arr.forEach(function(wd, i) {
              expect(wd.getText()).toMatch(expectedNames[i]);
@@ -99,7 +99,7 @@
          });
        };
 
-       it('should search across all fields when filtering with a string', function() {
+ it('should search across all fields when filtering with a string', function() {
          var searchText = element(by.model('searchText'));
          searchText.clear();
          searchText.sendKeys('m');
@@ -110,13 +110,13 @@
          expectFriendNames(['John', 'Julie'], 'friend');
        });
 
-       it('should search in specific fields when filtering with a predicate object', function() {
+ it('should search in specific fields when filtering with a predicate object', function() {
          var searchAny = element(by.model('search.$'));
          searchAny.clear();
          searchAny.sendKeys('i');
          expectFriendNames(['Mary', 'Mike', 'Julie', 'Juliette'], 'friendObj');
        });
-       it('should use a equal comparison when comparator is true', function() {
+ it('should use a equal comparison when comparator is true', function() {
          var searchName = element(by.model('search.name'));
          var strict = element(by.model('strict'));
          searchName.clear();
@@ -124,133 +124,133 @@
          strict.click();
          expectFriendNames(['Julie'], 'friendObj');
        });
-     </file>
-   </example>
+ </file>
+ </example>
  */
 function filterFilter() {
-  return function(array, expression, comparator) {
-    if (!isArrayLike(array)) {
-      if (array == null) {
-        return array;
-      } else {
-        throw minErr('filter')('notarray', 'Expected array but received: {0}', array);
-      }
-    }
+    return function (array, expression, comparator) {
+        if (!isArrayLike(array)) {
+            if (array == null) {
+                return array;
+            } else {
+                throw minErr('filter')('notarray', 'Expected array but received: {0}', array);
+            }
+        }
 
-    var expressionType = getTypeForFilter(expression);
-    var predicateFn;
-    var matchAgainstAnyProp;
+        var expressionType = getTypeForFilter(expression);
+        var predicateFn;
+        var matchAgainstAnyProp;
 
-    switch (expressionType) {
-      case 'function':
-        predicateFn = expression;
-        break;
-      case 'boolean':
-      case 'null':
-      case 'number':
-      case 'string':
-        matchAgainstAnyProp = true;
-        //jshint -W086
-      case 'object':
-        //jshint +W086
-        predicateFn = createPredicateFn(expression, comparator, matchAgainstAnyProp);
-        break;
-      default:
-        return array;
-    }
+        switch (expressionType) {
+            case 'function':
+                predicateFn = expression;
+                break;
+            case 'boolean':
+            case 'null':
+            case 'number':
+            case 'string':
+                matchAgainstAnyProp = true;
+            //jshint -W086
+            case 'object':
+                //jshint +W086
+                predicateFn = createPredicateFn(expression, comparator, matchAgainstAnyProp);
+                break;
+            default:
+                return array;
+        }
 
-    return Array.prototype.filter.call(array, predicateFn);
-  };
+        return Array.prototype.filter.call(array, predicateFn);
+    };
 }
 
 // Helper functions for `filterFilter`
 function createPredicateFn(expression, comparator, matchAgainstAnyProp) {
-  var shouldMatchPrimitives = isObject(expression) && ('$' in expression);
-  var predicateFn;
+    var shouldMatchPrimitives = isObject(expression) && ('$' in expression);
+    var predicateFn;
 
-  if (comparator === true) {
-    comparator = equals;
-  } else if (!isFunction(comparator)) {
-    comparator = function(actual, expected) {
-      if (isUndefined(actual)) {
-        // No substring matching against `undefined`
-        return false;
-      }
-      if ((actual === null) || (expected === null)) {
-        // No substring matching against `null`; only match against `null`
-        return actual === expected;
-      }
-      if (isObject(expected) || (isObject(actual) && !hasCustomToString(actual))) {
-        // Should not compare primitives against objects, unless they have custom `toString` method
-        return false;
-      }
+    if (comparator === true) {
+        comparator = equals;
+    } else if (!isFunction(comparator)) {
+        comparator = function (actual, expected) {
+            if (isUndefined(actual)) {
+                // No substring matching against `undefined`
+                return false;
+            }
+            if ((actual === null) || (expected === null)) {
+                // No substring matching against `null`; only match against `null`
+                return actual === expected;
+            }
+            if (isObject(expected) || (isObject(actual) && !hasCustomToString(actual))) {
+                // Should not compare primitives against objects, unless they have custom `toString` method
+                return false;
+            }
 
-      actual = lowercase('' + actual);
-      expected = lowercase('' + expected);
-      return actual.indexOf(expected) !== -1;
-    };
-  }
-
-  predicateFn = function(item) {
-    if (shouldMatchPrimitives && !isObject(item)) {
-      return deepCompare(item, expression.$, comparator, false);
+            actual = lowercase('' + actual);
+            expected = lowercase('' + expected);
+            return actual.indexOf(expected) !== -1;
+        };
     }
-    return deepCompare(item, expression, comparator, matchAgainstAnyProp);
-  };
 
-  return predicateFn;
+    predicateFn = function (item) {
+        if (shouldMatchPrimitives && !isObject(item)) {
+            return deepCompare(item, expression.$, comparator, false);
+        }
+        return deepCompare(item, expression, comparator, matchAgainstAnyProp);
+    };
+
+    return predicateFn;
 }
 
 function deepCompare(actual, expected, comparator, matchAgainstAnyProp, dontMatchWholeObject) {
-  var actualType = getTypeForFilter(actual);
-  var expectedType = getTypeForFilter(expected);
+    var actualType = getTypeForFilter(actual);
+    var expectedType = getTypeForFilter(expected);
 
-  if ((expectedType === 'string') && (expected.charAt(0) === '!')) {
-    return !deepCompare(actual, expected.substring(1), comparator, matchAgainstAnyProp);
-  } else if (isArray(actual)) {
-    // In case `actual` is an array, consider it a match
-    // if ANY of it's items matches `expected`
-    return actual.some(function(item) {
-      return deepCompare(item, expected, comparator, matchAgainstAnyProp);
-    });
-  }
+    if ((expectedType === 'string') && (expected.charAt(0) === '!')) {
+        return !deepCompare(actual, expected.substring(1), comparator, matchAgainstAnyProp);
+    } else if (isArray(actual)) {
+        // In case `actual` is an array, consider it a match
+        // if ANY of it's items matches `expected`
+        return actual.some(function (item) {
+            return deepCompare(item, expected, comparator, matchAgainstAnyProp);
+        });
+    }
 
-  switch (actualType) {
-    case 'object':
-      var key;
-      if (matchAgainstAnyProp) {
-        for (key in actual) {
-          if ((key.charAt(0) !== '$') && deepCompare(actual[key], expected, comparator, true)) {
-            return true;
-          }
-        }
-        return dontMatchWholeObject ? false : deepCompare(actual, expected, comparator, false);
-      } else if (expectedType === 'object') {
-        for (key in expected) {
-          var expectedVal = expected[key];
-          if (isFunction(expectedVal) || isUndefined(expectedVal)) {
-            continue;
-          }
+    switch (actualType) {
+        case 'object':
+            var key;
+            if (matchAgainstAnyProp) {
+                for (key in actual) {
+                    if ((key.charAt(0) !== '$') && deepCompare(actual[key], expected, comparator, true)) {
+                        return true;
+                    }
+                }
+                return dontMatchWholeObject ? false : deepCompare(actual, expected, comparator, false);
+            } else if (expectedType === 'object') {
+                for (key in expected) {
+                    var expectedVal = expected[key];
+                    if (isFunction(expectedVal) || isUndefined(expectedVal)) {
+                        continue;
+                    }
 
-          var matchAnyProperty = key === '$';
-          var actualVal = matchAnyProperty ? actual : actual[key];
-          if (!deepCompare(actualVal, expectedVal, comparator, matchAnyProperty, matchAnyProperty)) {
+                    var matchAnyProperty = key === '$';
+                    var actualVal = matchAnyProperty ? actual : actual[key];
+                    if (!deepCompare(actualVal, expectedVal, comparator, matchAnyProperty, matchAnyProperty)) {
+                        return false;
+                    }
+                }
+                return true;
+            } else {
+                return comparator(actual, expected);
+            }
+            break;
+        case 'function':
             return false;
-          }
-        }
-        return true;
-      } else {
-        return comparator(actual, expected);
-      }
-      break;
-    case 'function':
-      return false;
-    default:
-      return comparator(actual, expected);
-  }
+        default:
+            return comparator(actual, expected);
+    }
 }
 
 // Used for easily differentiating between `null` and actual `object`
 function getTypeForFilter(val) {
-  return (val === null) ? 'null' : typeof val;
+    return (val === null) ? 'null' : typeof val;
 }

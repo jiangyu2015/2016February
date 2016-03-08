@@ -37,7 +37,7 @@
  *
  * ```html
  * <ng-pluralize count="personCount"
-                 when="{'0': 'Nobody is viewing.',
+ when="{'0': 'Nobody is viewing.',
  *                      'one': '1 person is viewing.',
  *                      'other': '{} people are viewing.'}">
  * </ng-pluralize>
@@ -92,42 +92,42 @@
  * @param {number=} offset Offset to deduct from the total number.
  *
  * @example
-    <example module="pluralizeExample">
-      <file name="index.html">
-        <script>
-          angular.module('pluralizeExample', [])
-            .controller('ExampleController', ['$scope', function($scope) {
+ <example module="pluralizeExample">
+ <file name="index.html">
+ <script>
+ angular.module('pluralizeExample', [])
+ .controller('ExampleController', ['$scope', function($scope) {
               $scope.person1 = 'Igor';
               $scope.person2 = 'Misko';
               $scope.personCount = 1;
             }]);
-        </script>
-        <div ng-controller="ExampleController">
-          <label>Person 1:<input type="text" ng-model="person1" value="Igor" /></label><br/>
-          <label>Person 2:<input type="text" ng-model="person2" value="Misko" /></label><br/>
-          <label>Number of People:<input type="text" ng-model="personCount" value="1" /></label><br/>
+ </script>
+ <div ng-controller="ExampleController">
+ <label>Person 1:<input type="text" ng-model="person1" value="Igor" /></label><br/>
+ <label>Person 2:<input type="text" ng-model="person2" value="Misko" /></label><br/>
+ <label>Number of People:<input type="text" ng-model="personCount" value="1" /></label><br/>
 
-          <!--- Example with simple pluralization rules for en locale --->
-          Without Offset:
-          <ng-pluralize count="personCount"
-                        when="{'0': 'Nobody is viewing.',
+ <!--- Example with simple pluralization rules for en locale --->
+ Without Offset:
+ <ng-pluralize count="personCount"
+ when="{'0': 'Nobody is viewing.',
                                'one': '1 person is viewing.',
                                'other': '{} people are viewing.'}">
-          </ng-pluralize><br>
+ </ng-pluralize><br>
 
-          <!--- Example with offset --->
-          With Offset(2):
-          <ng-pluralize count="personCount" offset=2
-                        when="{'0': 'Nobody is viewing.',
+ <!--- Example with offset --->
+ With Offset(2):
+ <ng-pluralize count="personCount" offset=2
+ when="{'0': 'Nobody is viewing.',
                                '1': '{{person1}} is viewing.',
                                '2': '{{person1}} and {{person2}} are viewing.',
                                'one': '{{person1}}, {{person2}} and one other person are viewing.',
                                'other': '{{person1}}, {{person2}} and {} other people are viewing.'}">
-          </ng-pluralize>
-        </div>
-      </file>
-      <file name="protractor.js" type="protractor">
-        it('should show correct pluralized string', function() {
+ </ng-pluralize>
+ </div>
+ </file>
+ <file name="protractor.js" type="protractor">
+ it('should show correct pluralized string', function() {
           var withoutOffset = element.all(by.css('ng-pluralize')).get(0);
           var withOffset = element.all(by.css('ng-pluralize')).get(1);
           var countInput = element(by.model('personCount'));
@@ -159,7 +159,7 @@
           expect(withoutOffset.getText()).toEqual('4 people are viewing.');
           expect(withOffset.getText()).toEqual('Igor, Misko and 2 other people are viewing.');
         });
-        it('should show data-bound names', function() {
+ it('should show data-bound names', function() {
           var withOffset = element.all(by.css('ng-pluralize')).get(1);
           var personCount = element(by.model('personCount'));
           var person1 = element(by.model('person1'));
@@ -172,69 +172,69 @@
           person2.sendKeys('Vojta');
           expect(withOffset.getText()).toEqual('Di, Vojta and 2 other people are viewing.');
         });
-      </file>
-    </example>
+ </file>
+ </example>
  */
-var ngPluralizeDirective = ['$locale', '$interpolate', '$log', function($locale, $interpolate, $log) {
-  var BRACE = /{}/g,
-      IS_WHEN = /^when(Minus)?(.+)$/;
+var ngPluralizeDirective = ['$locale', '$interpolate', '$log', function ($locale, $interpolate, $log) {
+    var BRACE = /{}/g,
+        IS_WHEN = /^when(Minus)?(.+)$/;
 
-  return {
-    link: function(scope, element, attr) {
-      var numberExp = attr.count,
-          whenExp = attr.$attr.when && element.attr(attr.$attr.when), // we have {{}} in attrs
-          offset = attr.offset || 0,
-          whens = scope.$eval(whenExp) || {},
-          whensExpFns = {},
-          startSymbol = $interpolate.startSymbol(),
-          endSymbol = $interpolate.endSymbol(),
-          braceReplacement = startSymbol + numberExp + '-' + offset + endSymbol,
-          watchRemover = angular.noop,
-          lastCount;
+    return {
+        link: function (scope, element, attr) {
+            var numberExp = attr.count,
+                whenExp = attr.$attr.when && element.attr(attr.$attr.when), // we have {{}} in attrs
+                offset = attr.offset || 0,
+                whens = scope.$eval(whenExp) || {},
+                whensExpFns = {},
+                startSymbol = $interpolate.startSymbol(),
+                endSymbol = $interpolate.endSymbol(),
+                braceReplacement = startSymbol + numberExp + '-' + offset + endSymbol,
+                watchRemover = angular.noop,
+                lastCount;
 
-      forEach(attr, function(expression, attributeName) {
-        var tmpMatch = IS_WHEN.exec(attributeName);
-        if (tmpMatch) {
-          var whenKey = (tmpMatch[1] ? '-' : '') + lowercase(tmpMatch[2]);
-          whens[whenKey] = element.attr(attr.$attr[attributeName]);
-        }
-      });
-      forEach(whens, function(expression, key) {
-        whensExpFns[key] = $interpolate(expression.replace(BRACE, braceReplacement));
+            forEach(attr, function (expression, attributeName) {
+                var tmpMatch = IS_WHEN.exec(attributeName);
+                if (tmpMatch) {
+                    var whenKey = (tmpMatch[1] ? '-' : '') + lowercase(tmpMatch[2]);
+                    whens[whenKey] = element.attr(attr.$attr[attributeName]);
+                }
+            });
+            forEach(whens, function (expression, key) {
+                whensExpFns[key] = $interpolate(expression.replace(BRACE, braceReplacement));
 
-      });
+            });
 
-      scope.$watch(numberExp, function ngPluralizeWatchAction(newVal) {
-        var count = parseFloat(newVal);
-        var countIsNaN = isNaN(count);
+            scope.$watch(numberExp, function ngPluralizeWatchAction(newVal) {
+                var count = parseFloat(newVal);
+                var countIsNaN = isNaN(count);
 
-        if (!countIsNaN && !(count in whens)) {
-          // If an explicit number rule such as 1, 2, 3... is defined, just use it.
-          // Otherwise, check it against pluralization rules in $locale service.
-          count = $locale.pluralCat(count - offset);
-        }
+                if (!countIsNaN && !(count in whens)) {
+                    // If an explicit number rule such as 1, 2, 3... is defined, just use it.
+                    // Otherwise, check it against pluralization rules in $locale service.
+                    count = $locale.pluralCat(count - offset);
+                }
 
-        // If both `count` and `lastCount` are NaN, we don't need to re-register a watch.
-        // In JS `NaN !== NaN`, so we have to explicitly check.
-        if ((count !== lastCount) && !(countIsNaN && isNumber(lastCount) && isNaN(lastCount))) {
-          watchRemover();
-          var whenExpFn = whensExpFns[count];
-          if (isUndefined(whenExpFn)) {
-            if (newVal != null) {
-              $log.debug("ngPluralize: no rule defined for '" + count + "' in " + whenExp);
+                // If both `count` and `lastCount` are NaN, we don't need to re-register a watch.
+                // In JS `NaN !== NaN`, so we have to explicitly check.
+                if ((count !== lastCount) && !(countIsNaN && isNumber(lastCount) && isNaN(lastCount))) {
+                    watchRemover();
+                    var whenExpFn = whensExpFns[count];
+                    if (isUndefined(whenExpFn)) {
+                        if (newVal != null) {
+                            $log.debug("ngPluralize: no rule defined for '" + count + "' in " + whenExp);
+                        }
+                        watchRemover = noop;
+                        updateElementText();
+                    } else {
+                        watchRemover = scope.$watch(whenExpFn, updateElementText);
+                    }
+                    lastCount = count;
+                }
+            });
+
+            function updateElementText(newText) {
+                element.text(newText || '');
             }
-            watchRemover = noop;
-            updateElementText();
-          } else {
-            watchRemover = scope.$watch(whenExpFn, updateElementText);
-          }
-          lastCount = count;
         }
-      });
-
-      function updateElementText(newText) {
-        element.text(newText || '');
-      }
-    }
-  };
+    };
 }];

@@ -57,30 +57,30 @@
  *
  *
  * @example
-  <example module="switchExample" deps="angular-animate.js" animations="true">
-    <file name="index.html">
-      <div ng-controller="ExampleController">
-        <select ng-model="selection" ng-options="item for item in items">
-        </select>
-        <code>selection={{selection}}</code>
-        <hr/>
-        <div class="animate-switch-container"
-          ng-switch on="selection">
-            <div class="animate-switch" ng-switch-when="settings">Settings Div</div>
-            <div class="animate-switch" ng-switch-when="home">Home Span</div>
-            <div class="animate-switch" ng-switch-default>default</div>
-        </div>
-      </div>
-    </file>
-    <file name="script.js">
-      angular.module('switchExample', ['ngAnimate'])
-        .controller('ExampleController', ['$scope', function($scope) {
+ <example module="switchExample" deps="angular-animate.js" animations="true">
+ <file name="index.html">
+ <div ng-controller="ExampleController">
+ <select ng-model="selection" ng-options="item for item in items">
+ </select>
+ <code>selection={{selection}}</code>
+ <hr/>
+ <div class="animate-switch-container"
+ ng-switch on="selection">
+ <div class="animate-switch" ng-switch-when="settings">Settings Div</div>
+ <div class="animate-switch" ng-switch-when="home">Home Span</div>
+ <div class="animate-switch" ng-switch-default>default</div>
+ </div>
+ </div>
+ </file>
+ <file name="script.js">
+ angular.module('switchExample', ['ngAnimate'])
+ .controller('ExampleController', ['$scope', function($scope) {
           $scope.items = ['settings', 'home', 'other'];
           $scope.selection = $scope.items[0];
         }]);
-    </file>
-    <file name="animations.css">
-      .animate-switch-container {
+ </file>
+ <file name="animations.css">
+ .animate-switch-container {
         position:relative;
         background:white;
         border:1px solid black;
@@ -88,11 +88,11 @@
         overflow:hidden;
       }
 
-      .animate-switch {
+ .animate-switch {
         padding:10px;
       }
 
-      .animate-switch.ng-animate {
+ .animate-switch.ng-animate {
         transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
 
         position:absolute;
@@ -102,105 +102,107 @@
         bottom:0;
       }
 
-      .animate-switch.ng-leave.ng-leave-active,
-      .animate-switch.ng-enter {
+ .animate-switch.ng-leave.ng-leave-active,
+ .animate-switch.ng-enter {
         top:-50px;
       }
-      .animate-switch.ng-leave,
-      .animate-switch.ng-enter.ng-enter-active {
+ .animate-switch.ng-leave,
+ .animate-switch.ng-enter.ng-enter-active {
         top:0;
       }
-    </file>
-    <file name="protractor.js" type="protractor">
-      var switchElem = element(by.css('[ng-switch]'));
-      var select = element(by.model('selection'));
+ </file>
+ <file name="protractor.js" type="protractor">
+ var switchElem = element(by.css('[ng-switch]'));
+ var select = element(by.model('selection'));
 
-      it('should start in settings', function() {
+ it('should start in settings', function() {
         expect(switchElem.getText()).toMatch(/Settings Div/);
       });
-      it('should change to home', function() {
+ it('should change to home', function() {
         select.all(by.css('option')).get(1).click();
         expect(switchElem.getText()).toMatch(/Home Span/);
       });
-      it('should select default', function() {
+ it('should select default', function() {
         select.all(by.css('option')).get(2).click();
         expect(switchElem.getText()).toMatch(/default/);
       });
-    </file>
-  </example>
+ </file>
+ </example>
  */
-var ngSwitchDirective = ['$animate', function($animate) {
-  return {
-    require: 'ngSwitch',
+var ngSwitchDirective = ['$animate', function ($animate) {
+    return {
+        require: 'ngSwitch',
 
-    // asks for $scope to fool the BC controller module
-    controller: ['$scope', function ngSwitchController() {
-     this.cases = {};
-    }],
-    link: function(scope, element, attr, ngSwitchController) {
-      var watchExpr = attr.ngSwitch || attr.on,
-          selectedTranscludes = [],
-          selectedElements = [],
-          previousLeaveAnimations = [],
-          selectedScopes = [];
+        // asks for $scope to fool the BC controller module
+        controller: ['$scope', function ngSwitchController() {
+            this.cases = {};
+        }],
+        link: function (scope, element, attr, ngSwitchController) {
+            var watchExpr = attr.ngSwitch || attr.on,
+                selectedTranscludes = [],
+                selectedElements = [],
+                previousLeaveAnimations = [],
+                selectedScopes = [];
 
-      var spliceFactory = function(array, index) {
-          return function() { array.splice(index, 1); };
-      };
+            var spliceFactory = function (array, index) {
+                return function () {
+                    array.splice(index, 1);
+                };
+            };
 
-      scope.$watch(watchExpr, function ngSwitchWatchAction(value) {
-        var i, ii;
-        for (i = 0, ii = previousLeaveAnimations.length; i < ii; ++i) {
-          $animate.cancel(previousLeaveAnimations[i]);
-        }
-        previousLeaveAnimations.length = 0;
+            scope.$watch(watchExpr, function ngSwitchWatchAction(value) {
+                var i, ii;
+                for (i = 0, ii = previousLeaveAnimations.length; i < ii; ++i) {
+                    $animate.cancel(previousLeaveAnimations[i]);
+                }
+                previousLeaveAnimations.length = 0;
 
-        for (i = 0, ii = selectedScopes.length; i < ii; ++i) {
-          var selected = getBlockNodes(selectedElements[i].clone);
-          selectedScopes[i].$destroy();
-          var promise = previousLeaveAnimations[i] = $animate.leave(selected);
-          promise.then(spliceFactory(previousLeaveAnimations, i));
-        }
+                for (i = 0, ii = selectedScopes.length; i < ii; ++i) {
+                    var selected = getBlockNodes(selectedElements[i].clone);
+                    selectedScopes[i].$destroy();
+                    var promise = previousLeaveAnimations[i] = $animate.leave(selected);
+                    promise.then(spliceFactory(previousLeaveAnimations, i));
+                }
 
-        selectedElements.length = 0;
-        selectedScopes.length = 0;
+                selectedElements.length = 0;
+                selectedScopes.length = 0;
 
-        if ((selectedTranscludes = ngSwitchController.cases['!' + value] || ngSwitchController.cases['?'])) {
-          forEach(selectedTranscludes, function(selectedTransclude) {
-            selectedTransclude.transclude(function(caseElement, selectedScope) {
-              selectedScopes.push(selectedScope);
-              var anchor = selectedTransclude.element;
-              caseElement[caseElement.length++] = document.createComment(' end ngSwitchWhen: ');
-              var block = { clone: caseElement };
+                if ((selectedTranscludes = ngSwitchController.cases['!' + value] || ngSwitchController.cases['?'])) {
+                    forEach(selectedTranscludes, function (selectedTransclude) {
+                        selectedTransclude.transclude(function (caseElement, selectedScope) {
+                            selectedScopes.push(selectedScope);
+                            var anchor = selectedTransclude.element;
+                            caseElement[caseElement.length++] = document.createComment(' end ngSwitchWhen: ');
+                            var block = {clone: caseElement};
 
-              selectedElements.push(block);
-              $animate.enter(caseElement, anchor.parent(), anchor);
+                            selectedElements.push(block);
+                            $animate.enter(caseElement, anchor.parent(), anchor);
+                        });
+                    });
+                }
             });
-          });
         }
-      });
-    }
-  };
+    };
 }];
 
 var ngSwitchWhenDirective = ngDirective({
-  transclude: 'element',
-  priority: 1200,
-  require: '^ngSwitch',
-  multiElement: true,
-  link: function(scope, element, attrs, ctrl, $transclude) {
-    ctrl.cases['!' + attrs.ngSwitchWhen] = (ctrl.cases['!' + attrs.ngSwitchWhen] || []);
-    ctrl.cases['!' + attrs.ngSwitchWhen].push({ transclude: $transclude, element: element });
-  }
+    transclude: 'element',
+    priority: 1200,
+    require: '^ngSwitch',
+    multiElement: true,
+    link: function (scope, element, attrs, ctrl, $transclude) {
+        ctrl.cases['!' + attrs.ngSwitchWhen] = (ctrl.cases['!' + attrs.ngSwitchWhen] || []);
+        ctrl.cases['!' + attrs.ngSwitchWhen].push({transclude: $transclude, element: element});
+    }
 });
 
 var ngSwitchDefaultDirective = ngDirective({
-  transclude: 'element',
-  priority: 1200,
-  require: '^ngSwitch',
-  multiElement: true,
-  link: function(scope, element, attr, ctrl, $transclude) {
-    ctrl.cases['?'] = (ctrl.cases['?'] || []);
-    ctrl.cases['?'].push({ transclude: $transclude, element: element });
-   }
+    transclude: 'element',
+    priority: 1200,
+    require: '^ngSwitch',
+    multiElement: true,
+    link: function (scope, element, attr, ctrl, $transclude) {
+        ctrl.cases['?'] = (ctrl.cases['?'] || []);
+        ctrl.cases['?'].push({transclude: $transclude, element: element});
+    }
 });

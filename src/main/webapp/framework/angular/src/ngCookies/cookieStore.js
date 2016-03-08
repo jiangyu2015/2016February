@@ -33,49 +33,49 @@ angular.module('ngCookies').
  *   }]);
  * ```
  */
- factory('$cookieStore', ['$cookies', function($cookies) {
+factory('$cookieStore', ['$cookies', function ($cookies) {
 
     return {
-      /**
-       * @ngdoc method
-       * @name $cookieStore#get
-       *
-       * @description
-       * Returns the value of given cookie key
-       *
-       * @param {string} key Id to use for lookup.
-       * @returns {Object} Deserialized cookie value, undefined if the cookie does not exist.
-       */
-      get: function(key) {
-        return $cookies.getObject(key);
-      },
+        /**
+         * @ngdoc method
+         * @name $cookieStore#get
+         *
+         * @description
+         * Returns the value of given cookie key
+         *
+         * @param {string} key Id to use for lookup.
+         * @returns {Object} Deserialized cookie value, undefined if the cookie does not exist.
+         */
+        get: function (key) {
+            return $cookies.getObject(key);
+        },
 
-      /**
-       * @ngdoc method
-       * @name $cookieStore#put
-       *
-       * @description
-       * Sets a value for given cookie key
-       *
-       * @param {string} key Id for the `value`.
-       * @param {Object} value Value to be stored.
-       */
-      put: function(key, value) {
-        $cookies.putObject(key, value);
-      },
+        /**
+         * @ngdoc method
+         * @name $cookieStore#put
+         *
+         * @description
+         * Sets a value for given cookie key
+         *
+         * @param {string} key Id for the `value`.
+         * @param {Object} value Value to be stored.
+         */
+        put: function (key, value) {
+            $cookies.putObject(key, value);
+        },
 
-      /**
-       * @ngdoc method
-       * @name $cookieStore#remove
-       *
-       * @description
-       * Remove given cookie
-       *
-       * @param {string} key Id of the key-value pair to delete.
-       */
-      remove: function(key) {
-        $cookies.remove(key);
-      }
+        /**
+         * @ngdoc method
+         * @name $cookieStore#remove
+         *
+         * @description
+         * Remove given cookie
+         *
+         * @param {string} key Id of the key-value pair to delete.
+         */
+        remove: function (key) {
+            $cookies.remove(key);
+        }
     };
 
-  }]);
+}]);

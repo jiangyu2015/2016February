@@ -1,122 +1,122 @@
 'use strict';
 
 function classDirective(name, selector) {
-  name = 'ngClass' + name;
-  return ['$animate', function($animate) {
-    return {
-      restrict: 'AC',
-      link: function(scope, element, attr) {
-        var oldVal;
+    name = 'ngClass' + name;
+    return ['$animate', function ($animate) {
+        return {
+            restrict: 'AC',
+            link: function (scope, element, attr) {
+                var oldVal;
 
-        scope.$watch(attr[name], ngClassWatchAction, true);
+                scope.$watch(attr[name], ngClassWatchAction, true);
 
-        attr.$observe('class', function(value) {
-          ngClassWatchAction(scope.$eval(attr[name]));
-        });
+                attr.$observe('class', function (value) {
+                    ngClassWatchAction(scope.$eval(attr[name]));
+                });
 
 
-        if (name !== 'ngClass') {
-          scope.$watch('$index', function($index, old$index) {
-            // jshint bitwise: false
-            var mod = $index & 1;
-            if (mod !== (old$index & 1)) {
-              var classes = arrayClasses(scope.$eval(attr[name]));
-              mod === selector ?
-                addClasses(classes) :
-                removeClasses(classes);
+                if (name !== 'ngClass') {
+                    scope.$watch('$index', function ($index, old$index) {
+                        // jshint bitwise: false
+                        var mod = $index & 1;
+                        if (mod !== (old$index & 1)) {
+                            var classes = arrayClasses(scope.$eval(attr[name]));
+                            mod === selector ?
+                                addClasses(classes) :
+                                removeClasses(classes);
+                        }
+                    });
+                }
+
+                function addClasses(classes) {
+                    var newClasses = digestClassCounts(classes, 1);
+                    attr.$addClass(newClasses);
+                }
+
+                function removeClasses(classes) {
+                    var newClasses = digestClassCounts(classes, -1);
+                    attr.$removeClass(newClasses);
+                }
+
+                function digestClassCounts(classes, count) {
+                    // Use createMap() to prevent class assumptions involving property
+                    // names in Object.prototype
+                    var classCounts = element.data('$classCounts') || createMap();
+                    var classesToUpdate = [];
+                    forEach(classes, function (className) {
+                        if (count > 0 || classCounts[className]) {
+                            classCounts[className] = (classCounts[className] || 0) + count;
+                            if (classCounts[className] === +(count > 0)) {
+                                classesToUpdate.push(className);
+                            }
+                        }
+                    });
+                    element.data('$classCounts', classCounts);
+                    return classesToUpdate.join(' ');
+                }
+
+                function updateClasses(oldClasses, newClasses) {
+                    var toAdd = arrayDifference(newClasses, oldClasses);
+                    var toRemove = arrayDifference(oldClasses, newClasses);
+                    toAdd = digestClassCounts(toAdd, 1);
+                    toRemove = digestClassCounts(toRemove, -1);
+                    if (toAdd && toAdd.length) {
+                        $animate.addClass(element, toAdd);
+                    }
+                    if (toRemove && toRemove.length) {
+                        $animate.removeClass(element, toRemove);
+                    }
+                }
+
+                function ngClassWatchAction(newVal) {
+                    if (selector === true || scope.$index % 2 === selector) {
+                        var newClasses = arrayClasses(newVal || []);
+                        if (!oldVal) {
+                            addClasses(newClasses);
+                        } else if (!equals(newVal, oldVal)) {
+                            var oldClasses = arrayClasses(oldVal);
+                            updateClasses(oldClasses, newClasses);
+                        }
+                    }
+                    oldVal = shallowCopy(newVal);
+                }
             }
-          });
+        };
+
+        function arrayDifference(tokens1, tokens2) {
+            var values = [];
+
+            outer:
+                for (var i = 0; i < tokens1.length; i++) {
+                    var token = tokens1[i];
+                    for (var j = 0; j < tokens2.length; j++) {
+                        if (token == tokens2[j]) continue outer;
+                    }
+                    values.push(token);
+                }
+            return values;
         }
 
-        function addClasses(classes) {
-          var newClasses = digestClassCounts(classes, 1);
-          attr.$addClass(newClasses);
-        }
-
-        function removeClasses(classes) {
-          var newClasses = digestClassCounts(classes, -1);
-          attr.$removeClass(newClasses);
-        }
-
-        function digestClassCounts(classes, count) {
-          // Use createMap() to prevent class assumptions involving property
-          // names in Object.prototype
-          var classCounts = element.data('$classCounts') || createMap();
-          var classesToUpdate = [];
-          forEach(classes, function(className) {
-            if (count > 0 || classCounts[className]) {
-              classCounts[className] = (classCounts[className] || 0) + count;
-              if (classCounts[className] === +(count > 0)) {
-                classesToUpdate.push(className);
-              }
+        function arrayClasses(classVal) {
+            var classes = [];
+            if (isArray(classVal)) {
+                forEach(classVal, function (v) {
+                    classes = classes.concat(arrayClasses(v));
+                });
+                return classes;
+            } else if (isString(classVal)) {
+                return classVal.split(' ');
+            } else if (isObject(classVal)) {
+                forEach(classVal, function (v, k) {
+                    if (v) {
+                        classes = classes.concat(k.split(' '));
+                    }
+                });
+                return classes;
             }
-          });
-          element.data('$classCounts', classCounts);
-          return classesToUpdate.join(' ');
+            return classVal;
         }
-
-        function updateClasses(oldClasses, newClasses) {
-          var toAdd = arrayDifference(newClasses, oldClasses);
-          var toRemove = arrayDifference(oldClasses, newClasses);
-          toAdd = digestClassCounts(toAdd, 1);
-          toRemove = digestClassCounts(toRemove, -1);
-          if (toAdd && toAdd.length) {
-            $animate.addClass(element, toAdd);
-          }
-          if (toRemove && toRemove.length) {
-            $animate.removeClass(element, toRemove);
-          }
-        }
-
-        function ngClassWatchAction(newVal) {
-          if (selector === true || scope.$index % 2 === selector) {
-            var newClasses = arrayClasses(newVal || []);
-            if (!oldVal) {
-              addClasses(newClasses);
-            } else if (!equals(newVal,oldVal)) {
-              var oldClasses = arrayClasses(oldVal);
-              updateClasses(oldClasses, newClasses);
-            }
-          }
-          oldVal = shallowCopy(newVal);
-        }
-      }
-    };
-
-    function arrayDifference(tokens1, tokens2) {
-      var values = [];
-
-      outer:
-      for (var i = 0; i < tokens1.length; i++) {
-        var token = tokens1[i];
-        for (var j = 0; j < tokens2.length; j++) {
-          if (token == tokens2[j]) continue outer;
-        }
-        values.push(token);
-      }
-      return values;
-    }
-
-    function arrayClasses(classVal) {
-      var classes = [];
-      if (isArray(classVal)) {
-        forEach(classVal, function(v) {
-          classes = classes.concat(arrayClasses(v));
-        });
-        return classes;
-      } else if (isString(classVal)) {
-        return classVal.split(' ');
-      } else if (isObject(classVal)) {
-        forEach(classVal, function(v, k) {
-          if (v) {
-            classes = classes.concat(k.split(' '));
-          }
-        });
-        return classes;
-      }
-      return classVal;
-    }
-  }];
+    }];
 }
 
 /**
@@ -161,60 +161,60 @@ function classDirective(name, selector) {
  *   element.
  *
  * @example Example that demonstrates basic bindings via ngClass directive.
-   <example>
-     <file name="index.html">
-       <p ng-class="{strike: deleted, bold: important, 'has-error': error}">Map Syntax Example</p>
-       <label>
-          <input type="checkbox" ng-model="deleted">
-          deleted (apply "strike" class)
-       </label><br>
-       <label>
-          <input type="checkbox" ng-model="important">
-          important (apply "bold" class)
-       </label><br>
-       <label>
-          <input type="checkbox" ng-model="error">
-          error (apply "has-error" class)
-       </label>
-       <hr>
-       <p ng-class="style">Using String Syntax</p>
-       <input type="text" ng-model="style"
-              placeholder="Type: bold strike red" aria-label="Type: bold strike red">
-       <hr>
-       <p ng-class="[style1, style2, style3]">Using Array Syntax</p>
-       <input ng-model="style1"
-              placeholder="Type: bold, strike or red" aria-label="Type: bold, strike or red"><br>
-       <input ng-model="style2"
-              placeholder="Type: bold, strike or red" aria-label="Type: bold, strike or red 2"><br>
-       <input ng-model="style3"
-              placeholder="Type: bold, strike or red" aria-label="Type: bold, strike or red 3"><br>
-       <hr>
-       <p ng-class="[style4, {orange: warning}]">Using Array and Map Syntax</p>
-       <input ng-model="style4" placeholder="Type: bold, strike" aria-label="Type: bold, strike"><br>
-       <label><input type="checkbox" ng-model="warning"> warning (apply "orange" class)</label>
-     </file>
-     <file name="style.css">
-       .strike {
+ <example>
+ <file name="index.html">
+ <p ng-class="{strike: deleted, bold: important, 'has-error': error}">Map Syntax Example</p>
+ <label>
+ <input type="checkbox" ng-model="deleted">
+ deleted (apply "strike" class)
+ </label><br>
+ <label>
+ <input type="checkbox" ng-model="important">
+ important (apply "bold" class)
+ </label><br>
+ <label>
+ <input type="checkbox" ng-model="error">
+ error (apply "has-error" class)
+ </label>
+ <hr>
+ <p ng-class="style">Using String Syntax</p>
+ <input type="text" ng-model="style"
+ placeholder="Type: bold strike red" aria-label="Type: bold strike red">
+ <hr>
+ <p ng-class="[style1, style2, style3]">Using Array Syntax</p>
+ <input ng-model="style1"
+ placeholder="Type: bold, strike or red" aria-label="Type: bold, strike or red"><br>
+ <input ng-model="style2"
+ placeholder="Type: bold, strike or red" aria-label="Type: bold, strike or red 2"><br>
+ <input ng-model="style3"
+ placeholder="Type: bold, strike or red" aria-label="Type: bold, strike or red 3"><br>
+ <hr>
+ <p ng-class="[style4, {orange: warning}]">Using Array and Map Syntax</p>
+ <input ng-model="style4" placeholder="Type: bold, strike" aria-label="Type: bold, strike"><br>
+ <label><input type="checkbox" ng-model="warning"> warning (apply "orange" class)</label>
+ </file>
+ <file name="style.css">
+ .strike {
            text-decoration: line-through;
        }
-       .bold {
+ .bold {
            font-weight: bold;
        }
-       .red {
+ .red {
            color: red;
        }
-       .has-error {
+ .has-error {
            color: red;
            background-color: yellow;
        }
-       .orange {
+ .orange {
            color: orange;
        }
-     </file>
-     <file name="protractor.js" type="protractor">
-       var ps = element.all(by.css('p'));
+ </file>
+ <file name="protractor.js" type="protractor">
+ var ps = element.all(by.css('p'));
 
-       it('should let you toggle the class', function() {
+ it('should let you toggle the class', function() {
 
          expect(ps.first().getAttribute('class')).not.toMatch(/bold/);
          expect(ps.first().getAttribute('class')).not.toMatch(/has-error/);
@@ -226,14 +226,14 @@ function classDirective(name, selector) {
          expect(ps.first().getAttribute('class')).toMatch(/has-error/);
        });
 
-       it('should let you toggle string example', function() {
+ it('should let you toggle string example', function() {
          expect(ps.get(1).getAttribute('class')).toBe('');
          element(by.model('style')).clear();
          element(by.model('style')).sendKeys('red');
          expect(ps.get(1).getAttribute('class')).toBe('red');
        });
 
-       it('array example should have 3 classes', function() {
+ it('array example should have 3 classes', function() {
          expect(ps.get(2).getAttribute('class')).toBe('');
          element(by.model('style1')).sendKeys('bold');
          element(by.model('style2')).sendKeys('strike');
@@ -241,38 +241,38 @@ function classDirective(name, selector) {
          expect(ps.get(2).getAttribute('class')).toBe('bold strike red');
        });
 
-       it('array with map example should have 2 classes', function() {
+ it('array with map example should have 2 classes', function() {
          expect(ps.last().getAttribute('class')).toBe('');
          element(by.model('style4')).sendKeys('bold');
          element(by.model('warning')).click();
          expect(ps.last().getAttribute('class')).toBe('bold orange');
        });
-     </file>
-   </example>
+ </file>
+ </example>
 
-   ## Animations
+ ## Animations
 
-   The example below demonstrates how to perform animations using ngClass.
+ The example below demonstrates how to perform animations using ngClass.
 
-   <example module="ngAnimate" deps="angular-animate.js" animations="true">
-     <file name="index.html">
-      <input id="setbtn" type="button" value="set" ng-click="myVar='my-class'">
-      <input id="clearbtn" type="button" value="clear" ng-click="myVar=''">
-      <br>
-      <span class="base-class" ng-class="myVar">Sample Text</span>
-     </file>
-     <file name="style.css">
-       .base-class {
+ <example module="ngAnimate" deps="angular-animate.js" animations="true">
+ <file name="index.html">
+ <input id="setbtn" type="button" value="set" ng-click="myVar='my-class'">
+ <input id="clearbtn" type="button" value="clear" ng-click="myVar=''">
+ <br>
+ <span class="base-class" ng-class="myVar">Sample Text</span>
+ </file>
+ <file name="style.css">
+ .base-class {
          transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
        }
 
-       .base-class.my-class {
+ .base-class.my-class {
          color: red;
          font-size:3em;
        }
-     </file>
-     <file name="protractor.js" type="protractor">
-       it('should check ng-class', function() {
+ </file>
+ <file name="protractor.js" type="protractor">
+ it('should check ng-class', function() {
          expect(element(by.css('.base-class')).getAttribute('class')).not.
            toMatch(/my-class/);
 
@@ -286,16 +286,16 @@ function classDirective(name, selector) {
          expect(element(by.css('.base-class')).getAttribute('class')).not.
            toMatch(/my-class/);
        });
-     </file>
-   </example>
+ </file>
+ </example>
 
 
-   ## ngClass and pre-existing CSS3 Transitions/Animations
-   The ngClass directive still supports CSS3 Transitions/Animations even if they do not follow the ngAnimate CSS naming structure.
-   Upon animation ngAnimate will apply supplementary CSS classes to track the start and end of an animation, but this will not hinder
-   any pre-existing CSS transitions already on the element. To get an idea of what happens during a class-based animation, be sure
-   to view the step by step details of {@link $animate#addClass $animate.addClass} and
-   {@link $animate#removeClass $animate.removeClass}.
+ ## ngClass and pre-existing CSS3 Transitions/Animations
+ The ngClass directive still supports CSS3 Transitions/Animations even if they do not follow the ngAnimate CSS naming structure.
+ Upon animation ngAnimate will apply supplementary CSS classes to track the start and end of an animation, but this will not hinder
+ any pre-existing CSS transitions already on the element. To get an idea of what happens during a class-based animation, be sure
+ to view the step by step details of {@link $animate#addClass $animate.addClass} and
+ {@link $animate#removeClass $animate.removeClass}.
  */
 var ngClassDirective = classDirective('', true);
 
@@ -317,33 +317,33 @@ var ngClassDirective = classDirective('', true);
  *   of the evaluation can be a string representing space delimited class names or an array.
  *
  * @example
-   <example>
-     <file name="index.html">
-        <ol ng-init="names=['John', 'Mary', 'Cate', 'Suz']">
-          <li ng-repeat="name in names">
-           <span ng-class-odd="'odd'" ng-class-even="'even'">
-             {{name}}
-           </span>
-          </li>
-        </ol>
-     </file>
-     <file name="style.css">
-       .odd {
+ <example>
+ <file name="index.html">
+ <ol ng-init="names=['John', 'Mary', 'Cate', 'Suz']">
+ <li ng-repeat="name in names">
+ <span ng-class-odd="'odd'" ng-class-even="'even'">
+ {{name}}
+ </span>
+ </li>
+ </ol>
+ </file>
+ <file name="style.css">
+ .odd {
          color: red;
        }
-       .even {
+ .even {
          color: blue;
        }
-     </file>
-     <file name="protractor.js" type="protractor">
-       it('should check ng-class-odd and ng-class-even', function() {
+ </file>
+ <file name="protractor.js" type="protractor">
+ it('should check ng-class-odd and ng-class-even', function() {
          expect(element(by.repeater('name in names').row(0).column('name')).getAttribute('class')).
            toMatch(/odd/);
          expect(element(by.repeater('name in names').row(1).column('name')).getAttribute('class')).
            toMatch(/even/);
        });
-     </file>
-   </example>
+ </file>
+ </example>
  */
 var ngClassOddDirective = classDirective('Odd', 0);
 
@@ -365,32 +365,32 @@ var ngClassOddDirective = classDirective('Odd', 0);
  *   result of the evaluation can be a string representing space delimited class names or an array.
  *
  * @example
-   <example>
-     <file name="index.html">
-        <ol ng-init="names=['John', 'Mary', 'Cate', 'Suz']">
-          <li ng-repeat="name in names">
-           <span ng-class-odd="'odd'" ng-class-even="'even'">
-             {{name}} &nbsp; &nbsp; &nbsp;
-           </span>
-          </li>
-        </ol>
-     </file>
-     <file name="style.css">
-       .odd {
+ <example>
+ <file name="index.html">
+ <ol ng-init="names=['John', 'Mary', 'Cate', 'Suz']">
+ <li ng-repeat="name in names">
+ <span ng-class-odd="'odd'" ng-class-even="'even'">
+ {{name}} &nbsp; &nbsp; &nbsp;
+ </span>
+ </li>
+ </ol>
+ </file>
+ <file name="style.css">
+ .odd {
          color: red;
        }
-       .even {
+ .even {
          color: blue;
        }
-     </file>
-     <file name="protractor.js" type="protractor">
-       it('should check ng-class-odd and ng-class-even', function() {
+ </file>
+ <file name="protractor.js" type="protractor">
+ it('should check ng-class-odd and ng-class-even', function() {
          expect(element(by.repeater('name in names').row(0).column('name')).getAttribute('class')).
            toMatch(/odd/);
          expect(element(by.repeater('name in names').row(1).column('name')).getAttribute('class')).
            toMatch(/even/);
        });
-     </file>
-   </example>
+ </file>
+ </example>
  */
 var ngClassEvenDirective = classDirective('Even', 1);

@@ -1,6 +1,6 @@
 'use strict';
 
 var styleDirective = valueFn({
-  restrict: 'E',
-  terminal: false
+    restrict: 'E',
+    terminal: false
 });
